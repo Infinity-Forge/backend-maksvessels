@@ -1,0 +1,741 @@
+type: collection.insomnia.rest/5.0
+name: TCC
+meta:
+  id: wrk_c2862b3e8ab949199e6cfae3b082c830
+  created: 1744380171763
+  modified: 1747492866249
+collection:
+  - name: compartilhamento
+    meta:
+      id: fld_d75d4e69e8c04ad5852f91cdf7e597f7
+      created: 1744629938220
+      modified: 1747492866195
+      sortKey: -1744629938420
+    children:
+      - url: http://localhost:3333/compartilhamento
+        name: Listar
+        meta:
+          id: req_72c8a9050ffb4dd0990d56b51227233c
+          created: 1744380185051
+          modified: 1747492866224
+          isPrivate: false
+          sortKey: -1744629986755
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/compartilhamento
+        name: Cadastrar
+        meta:
+          id: req_430392acbb7e485ea5541d7e863fe690
+          created: 1744380402551
+          modified: 1747492866212
+          isPrivate: false
+          sortKey: -1744629986705
+        method: POST
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/compartilhamento
+        name: Editar
+        meta:
+          id: req_d1b55c6969e6403aab7d016dcdaf25e3
+          created: 1744380435247
+          modified: 1747492866243
+          isPrivate: false
+          sortKey: -1744629986655
+        method: PATCH
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/compartilhamento
+        name: Apagar
+        meta:
+          id: req_9962c3ad6c15407e90c1984a0ea33c01
+          created: 1744380542057
+          modified: 1747492866230
+          isPrivate: false
+          sortKey: -1744629986680
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: usuarios
+    meta:
+      id: fld_5738377c11de48b7881254257af5ef40
+      created: 1744630122508
+      modified: 1747492866187
+      sortKey: -1744629938370
+    children:
+      - url: http://localhost:3333/usuarios
+        name: Listar
+        meta:
+          id: req_dac6da1666014b39b96a0d33f9b4abd5
+          created: 1744630122510
+          modified: 1747492866246
+          isPrivate: false
+          sortKey: -1744629986755
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/usuarios
+        name: Cadastrar
+        meta:
+          id: req_9883c13b880f47c8b24f209136d38b5f
+          created: 1744630122512
+          modified: 1747492866229
+          isPrivate: false
+          sortKey: -1744629986705
+        method: POST
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/usuarios
+        name: Editar
+        meta:
+          id: req_7a89cf18a70340a585b5f5555288e704
+          created: 1744630122514
+          modified: 1747492866227
+          isPrivate: false
+          sortKey: -1744629986655
+        method: PATCH
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/usuarios
+        name: Apagar
+        meta:
+          id: req_819e776e87a94821b97f6a0b29724113
+          created: 1744630122516
+          modified: 1747492866228
+          isPrivate: false
+          sortKey: -1744629986680
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: assuntos
+    meta:
+      id: fld_f5c3984cac514ce9bcc64b6f8cd52ff7
+      created: 1744630132742
+      modified: 1747492866198
+      sortKey: -1744629938395
+    children:
+      - url: http://localhost:3333/assuntos
+        name: Listar
+        meta:
+          id: req_fe625de9009a4978933ce82179b9d1fd
+          created: 1744630132743
+          modified: 1747492866248
+          isPrivate: false
+          sortKey: -1744629986755
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/assuntos
+        name: Cadastrar
+        meta:
+          id: req_d6304f3870b744239846612e8cb0517d
+          created: 1744630132745
+          modified: 1747492866244
+          isPrivate: false
+          sortKey: -1744629986705
+        method: POST
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/assuntos
+        name: Editar
+        meta:
+          id: req_05237a5ea26c43d18118e34e1fe0bb6f
+          created: 1744630132747
+          modified: 1747492866204
+          isPrivate: false
+          sortKey: -1744629986655
+        method: PATCH
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/assuntos
+        name: Apagar
+        meta:
+          id: req_6bda761e173b474584bd7df8b9918a55
+          created: 1744630132748
+          modified: 1747492866222
+          isPrivate: false
+          sortKey: -1744629986680
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: noticias
+    meta:
+      id: fld_778beb5100204396ac062809d995b22b
+      created: 1744630163557
+      modified: 1747492866191
+      sortKey: -1744629938320
+    children:
+      - url: http://localhost:3333/noticias
+        name: Listar
+        meta:
+          id: req_42a7558ce4fd4cc08e8adaa839e631b3
+          created: 1744630163558
+          modified: 1747492866211
+          isPrivate: false
+          sortKey: -1744629986755
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/noticias
+        name: Cadastrar
+        meta:
+          id: req_acc5308818fc4f11b1d39ea03671db58
+          created: 1744630163560
+          modified: 1747492866238
+          isPrivate: false
+          sortKey: -1744629986705
+        method: POST
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/noticias
+        name: Editar
+        meta:
+          id: req_9d3fd2d0579643209ba8eb2f172045ab
+          created: 1744630163562
+          modified: 1747492866232
+          isPrivate: false
+          sortKey: -1744629986655
+        method: PATCH
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/noticias
+        name: Apagar
+        meta:
+          id: req_6795bcb07dfd44c9a3f897a1296cf033
+          created: 1744630163563
+          modified: 1747492866219
+          isPrivate: false
+          sortKey: -1744629986680
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: faq
+    meta:
+      id: fld_6f51641f0662448aa20c4f4229ce87ee
+      created: 1744630183667
+      modified: 1747492866189
+      sortKey: -1744629938270
+    children:
+      - url: http://localhost:3333/faq
+        name: Listar
+        meta:
+          id: req_a71fce8431e54835b263711f71b78af5
+          created: 1744630183668
+          modified: 1747492866236
+          isPrivate: false
+          sortKey: -1744629986755
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/faq
+        name: Cadastrar
+        meta:
+          id: req_de94098ca1b147edaa17359cacf851f1
+          created: 1744630183670
+          modified: 1747492866247
+          isPrivate: false
+          sortKey: -1744629986705
+        method: POST
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/faq
+        name: Editar
+        meta:
+          id: req_686ecaf2702d4797b639a68208844349
+          created: 1744630183671
+          modified: 1747492866220
+          isPrivate: false
+          sortKey: -1744629986655
+        method: PATCH
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/faq
+        name: Apagar
+        meta:
+          id: req_00383fc1ab5d4bbf9bfa391f4d0fb082
+          created: 1744630183673
+          modified: 1747492866200
+          isPrivate: false
+          sortKey: -1744629986680
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: infsJogo
+    meta:
+      id: fld_d60abeeabee047ff8eeaf684af45aa92
+      created: 1744630200520
+      modified: 1747492866194
+      sortKey: -1744629938220
+    children:
+      - url: http://localhost:3333/infsJogo
+        name: Listar
+        meta:
+          id: req_c14d7d2bb5b8448686950ed0d8f9da99
+          created: 1744630200522
+          modified: 1747492866240
+          isPrivate: false
+          sortKey: -1744629986755
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/infsJogo
+        name: Cadastrar
+        meta:
+          id: req_0f68cc1d716d445e8bd5d947054d35f9
+          created: 1744630200525
+          modified: 1747492866207
+          isPrivate: false
+          sortKey: -1744629986705
+        method: POST
+        body:
+          mimeType: application/json
+          text: >-
+            {
+            			"inf_id": 1,
+            			"cat_id": 1,
+            			"usu_id": 1,
+            			"inf_titulo": "Espada Flamejante",
+            			"inf_descricao": "Uma espada lendária que emana chamas e pode causar dano extra contra inimigos de gelo.",
+            			"inf_imagem": "espada_flamejante.jpg"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/infsJogo/19
+        name: Editar
+        meta:
+          id: req_07ca5bb1449742fcbe39ad7fc760af67
+          created: 1744630200527
+          modified: 1747492866205
+          isPrivate: false
+          sortKey: -1744629986655
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: >-
+            {
+            			"cat_id": 1,
+            			"usu_id": 1,
+            			"inf_titulo": "1",
+            			"inf_descricao": "Espada Flamejante do Cleverson",
+            			"inf_imagem": "Uma espada lendária que emana chamas e pode causar dano extra contra inimigos de gelo."
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/infsJogo/19
+        name: Apagar
+        meta:
+          id: req_c1a5f484bf684e69a58fd118e1f8a5d5
+          created: 1744630200530
+          modified: 1747492866241
+          isPrivate: false
+          sortKey: -1744629986680
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: suporte
+    meta:
+      id: fld_f34da8a12d734916ba8b804a5dfe51eb
+      created: 1744630210979
+      modified: 1747492866197
+      sortKey: -1744629938170
+    children:
+      - url: http://localhost:3333/suporte
+        name: Listar
+        meta:
+          id: req_a0d1d847a97b462da7e45b3a8b81d11f
+          created: 1744630210980
+          modified: 1747492866235
+          isPrivate: false
+          sortKey: -1744629986755
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/suporte
+        name: Cadastrar
+        meta:
+          id: req_48c6692fcadd4e0fb0b766929ad3b9b1
+          created: 1744630210982
+          modified: 1747492866214
+          isPrivate: false
+          sortKey: -1744629986705
+        method: POST
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/suporte
+        name: Editar
+        meta:
+          id: req_015688b9b9474de283928773a30d927a
+          created: 1744630210984
+          modified: 1747492866202
+          isPrivate: false
+          sortKey: -1744629986655
+        method: PATCH
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/suporte
+        name: Apagar
+        meta:
+          id: req_3212be3860284a43b1c1b216bbc1b85f
+          created: 1744630210985
+          modified: 1747492866210
+          isPrivate: false
+          sortKey: -1744629986680
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: categoria
+    meta:
+      id: fld_d1edf94744014fbab62b4514e4e18fd0
+      created: 1744630224342
+      modified: 1747492866193
+      sortKey: -1744629938120
+    children:
+      - url: http://localhost:3333/categoria
+        name: Listar
+        meta:
+          id: req_ced36e7abebf4eeebe6bb6d10d0e6255
+          created: 1744630224344
+          modified: 1747492866242
+          isPrivate: false
+          sortKey: -1744629986755
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/categoria
+        name: Cadastrar
+        meta:
+          id: req_528efb654cae45c1bfaec75ac410f33e
+          created: 1744630224346
+          modified: 1747492866215
+          isPrivate: false
+          sortKey: -1744629986705
+        method: POST
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/categoria
+        name: Editar
+        meta:
+          id: req_73b12f8648ff4843acbbe4db7cec14da
+          created: 1744630224347
+          modified: 1747492866225
+          isPrivate: false
+          sortKey: -1744629986655
+        method: PATCH
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3333/categoria
+        name: Apagar
+        meta:
+          id: req_2b80bc355b8c4a33b420b05c605cf2a7
+          created: 1744630224350
+          modified: 1747492866208
+          isPrivate: false
+          sortKey: -1744629986680
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_2dfb813aca8365765441768c04e79a60947185c2
+    created: 1747492866305
+    modified: 1747492866305
+environments:
+  name: Base Environment
+  meta:
+    id: env_2dfb813aca8365765441768c04e79a60947185c2
+    created: 1744380171768
+    modified: 1747492866186
+    isPrivate: false
