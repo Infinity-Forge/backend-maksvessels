@@ -8,7 +8,7 @@ const FAQController = require('../controllers/faq');
 const NoticiasController = require('../controllers/noticias');
 const infsJogoController = require('../controllers/infsJogo');
 const SuporteController = require('../controllers/suporte');
-const CompartilhamentoController = require('../controllers/Compartilhamento');
+const CompartilhamentoController = require('../controllers/compartilhamento');
 
 router.get('/usuarios', UsuariosController.listarUsuarios); 
 router.post('/usuarios', UsuariosController.cadastrarUsuarios); 

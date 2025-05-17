@@ -1,4 +1,4 @@
-const db = require('../dataBase/connection'); 
+const db = require('../database/connection'); 
 
 module.exports = {
     async listarNoticias(request, response) {
