@@ -56,9 +56,12 @@ SHOW TABLES;
 ## PROJETO TCC
 1. Alterar os dados da conexão do MySQL acessando `.\api-node-js\.env`;
 2. Após inserir dados da conexão abra o terminal dentro da pasta `.\api-node-js`;
-2.1 Rode o projeto utilizando o comando `npm rum dev`;
-2.2 Caso problema cheque se o NPM, MySQL e o ENV e demais dependências estão instaladas.
-3. Acesse pelo navegador o projeto localmente `localhost:3333`
+
+	2.1 Rode o projeto utilizando o comando `npm rum dev`;
+   
+	2.2 Caso problema cheque se o NPM, MySQL e o ENV e demais dependências estão instaladas.
+
+4. Acesse pelo navegador o projeto localmente `localhost:3333`
 
 ## PROJETO NO GITHUB
 Projeto rodando em localhost no repositório [site-tcc-localhost](https://github.com/ViniciusDadalte/site-tcc-localhost) no GitHub do desenvolvedor [Vinícius Gabriel](https://github.com/ViniciusDadalte). Caso não tenha o Git instalado veja na [Documentação do Git]() como instalar na sua máquina, caso queira usar uma CLI dica é [GitKraken](), [Tortoise Git](https://tortoisegit.org/) ou utilizar as extensões do VS Code. 
@@ -66,18 +69,20 @@ Dúvidas sobre comandos Git acesse [Lista de comandos úteis do Git](https://gis
 
 ### Inserindo usuário e senha do Github:
 1. Acessar o GitHub pelo terminal Git:
-	1.1 Determinar usuário:
+	
+	 1.1 Determinar usuário:
 	`git config --global user.name "Nome do Usuário"`
-	1.2 Determinar o email do usuário:
+	
+ 	1.2 Determinar o email do usuário:
 	`git config --global user.email email@email.com.br`
 	
 ### Clonar o Repositório
 1. Criar nova pasta:
-`mkdir pasta-do-projeto`
+`mkdir site-tcc-localhost`
 2. Entrar na pasta:
-`cd pasta-do-projeto`
+`cd site-tcc-localhost`
 3. Clonar um repositório para a máquina em uso:
-`git clone https://github.com/nome-do-usuário/nome-do-repositório.git`
+`git clone https://github.com/ViniciusDadalte/site-tcc-localhost.git`
 
 ### Criar um Novo Repositório via Terminal 
 1. Criar um arquivo Markdown que será o readme do repositório:
@@ -91,13 +96,13 @@ Dúvidas sobre comandos Git acesse [Lista de comandos úteis do Git](https://gis
 5. Definir a branch master:
 `git branch -M master`
 6. Adiciona no repositório remoto:
-`git remote add origin https://github.com/mayannaoliveira/Nome-Repositório.git`
+`git remote add origin https://github.com/Usuario/Nome-Repositório.git`
 7. O primeiro envio do repositório deve ser feito na branch main:
 `git push -u origin main`
 	
 ### Envio do Repositório pelo Terminal
 1. Caso seja o primeiro envio deve inserir o nome do repositório:
-`git remote add origin https://github.com/nome-do-usuário/nome-do-repositório.git`
+`git remote add origin https://github.com/Usuario/Nome-Repositório.git`
 2. Cajo não seja o primeiro commit e queira enviar todos os arquivos locais para o Github estão:
 `git add .`
 3. Seleção da branch que será utilizada:
