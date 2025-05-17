@@ -230,4 +230,4 @@ Repositórios com o projeto em andamento:
 | Vinícius Gabriel | [![colega-nome](https://img.shields.io/badge/GitHub-181717.svg?style=for-the-badge&logo=GitHub&logoColor=white)](https://github.com/ViniciusDadalte/site-tcc-localhost) |
 | Evandro Orso| [![colega-nome](https://img.shields.io/badge/GitHub-181717.svg?style=for-the-badge&logo=GitHub&logoColor=white)](https://github.com/EvandroOrso) |
 
-A lista de todos os colaborados estão no arquivo [CONTRIBUTING.md](.\CONTRIBUTING.md`).
+A lista de todos os colaborados estão no arquivo [CONTRIBUTING.md](./CONTRIBUTING.md).
