@@ -1,21 +1,22 @@
 -- Inserts para a tabela USUARIOS
-INSERT INTO USUARIOS (usu_nome, usu_email, usu_senha, usu_data_cadastro, usu_tipo) VALUES
+INSERT INTO USUARIOS (usu_nome, usu_email, usu_senha, usu_data_cadastro, usu_tipo, usu_ativo) VALUES
 -- Administradores
-('Carlos Silva', 'carlos.silva@email.com', 'senha123', NOW(), 'Administrador'),
-('Ricardo Mendes', 'ricardo.mendes@email.com', 'senha654', NOW(), 'Administrador'),
-('Gustavo Ferreira', 'gustavo.ferreira@email.com', 'senha333', NOW(), 'Administrador'),
-('Bruno Cardoso', 'bruno.cardoso@email.com', 'senha777', NOW(), 'Administrador'),
-('Rafael Almeida', 'rafael.almeida@email.com', 'senha202', NOW(), 'Administrador'),
-('Henrique Vasconcelos', 'henrique.vasconcelos@email.com', 'senha808', NOW(), 'Administrador'),
-('André Maciel', 'andre.maciel@email.com', 'senha030', NOW(), 'Administrador'),
+('Carlos Silva', 'carlos.silva@email.com', 'senha123', NOW(), 'Administrador', 1),
+('Ricardo Mendes', 'ricardo.mendes@email.com', 'senha654', NOW(), 'Administrador', 1),
+('Gustavo Ferreira', 'gustavo.ferreira@email.com', 'senha333', NOW(), 'Administrador', 1),
+('Bruno Cardoso', 'bruno.cardoso@email.com', 'senha777', NOW(), 'Administrador', 1),
+('Rafael Almeida', 'rafael.almeida@email.com', 'senha202', NOW(), 'Administrador', 1),
+('Henrique Vasconcelos', 'henrique.vasconcelos@email.com', 'senha808', NOW(), 'Administrador', 1),
+('André Maciel', 'andre.maciel@email.com', 'senha030', NOW(), 'Administrador', 1),
 
 -- Moderadores
-('João Souza', 'joao.souza@email.com', 'senha789', NOW(), 'Moderador'),
-('Eduardo Alves', 'eduardo.alves@email.com', 'senha111', NOW(), 'Moderador'),
-('Thiago Ribeiro', 'thiago.ribeiro@email.com', 'senha555', NOW(), 'Moderador'),
-('Juliana Mendes', 'juliana.mendes@email.com', 'senha101', NOW(), 'Moderador'),
-('Leonardo Campos', 'leonardo.campos@email.com', 'senha606', NOW(), 'Moderador'),
-('Rodrigo Nascimento', 'rodrigo.nascimento@email.com', 'senha010', NOW(), 'Moderador');
+('João Souza', 'joao.souza@email.com', 'senha789', NOW(), 'Moderador', 1),
+('Eduardo Alves', 'eduardo.alves@email.com', 'senha111', NOW(), 'Moderador', 1),
+('Thiago Ribeiro', 'thiago.ribeiro@email.com', 'senha555', NOW(), 'Moderador', 1),
+('Juliana Mendes', 'juliana.mendes@email.com', 'senha101', NOW(), 'Moderador', 1),
+('Leonardo Campos', 'leonardo.campos@email.com', 'senha606', NOW(), 'Moderador', 1),
+('Rodrigo Nascimento', 'rodrigo.nascimento@email.com', 'senha010', NOW(), 'Moderador', 1);
+
 
 -- Inserts para a tabela FAQ
 INSERT INTO FAQ (usu_id, faq_pergunta, faq_resposta) VALUES

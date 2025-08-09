@@ -1,4 +1,4 @@
-SELECT usu_id, usu_nome, usu_email, usu_senha, usu_data_cadastro, usu_tipo FROM USUARIOS;
+SELECT usu_id, usu_nome, usu_email, usu_senha, usu_data_cadastro, usu_tipo, usu_ativo FROM USUARIOS;
 SELECT faq_id, usu_id, faq_pergunta, faq_resposta FROM FAQ;
 SELECT not_id, usu_id, not_titulo, not_conteudo, not_imagem, not_data_publicacao FROM NOTICIAS;
 SELECT comp_id, not_id, comp_plataforma, comp_data FROM COMPARTILHAMENTO;
