@@ -3,29 +3,30 @@ const db = require('../database/connection');
 module.exports = {
     async listarAssuntos(request, response) {
         try {
+            const { id, nome } = request.query;
 
             const sql = `
-            SELECT
-                asst_id, asst_nome 
-            FROM ASSUNTOS;
+                SELECT asst_id, asst_nome 
+                FROM ASSUNTOS
+                WHERE asst_id LIKE ? AND asst_nome LIKE ?;
             `;
 
-            const [rows] = await db.query(sql);
-
-            const nRegistros = rows.length;
-
+            const [rows] = await db.query(sql, [
+                id ? id : `%`,
+                nome ? `%${nome}%` : `%`
+            ]);
 
             return response.status(200).json({
                 sucesso: true,
-                mensagem: 'Lista de Assuntos',
-                nRegistros,
+                mensagem: rows.length > 0 ? 'Assuntos encontrados.' : 'Nenhum assunto encontrado.',
+                nItens: rows.length,
                 dados: rows
             });
 
         } catch (error) {
             return response.status(500).json({
                 sucesso: false,
-                mensagem: 'Erro na requisição.',
+                mensagem: 'Erro ao listar assuntos.',
                 dados: error.message
             });
         }

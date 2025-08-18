@@ -3,23 +3,30 @@ const db = require('../database/connection');
 module.exports = {
     async listarCategoria(request, response) {
         try {
+            const { id, nome } = request.query;
+
             const sql = `
-                SELECT cat_id, cat_nome FROM CATEGORIA;
+                SELECT cat_id, cat_nome 
+                FROM CATEGORIA
+                WHERE cat_id LIKE ? AND cat_nome LIKE ?;
             `;
-            
-            const [rows] = await db.query(sql);
-            const nResgistros = rows.length;
+
+            const [rows] = await db.query(sql, [
+                id ? id : `%`,
+                nome ? `%${nome}%` : `%`
+            ]);
 
             return response.status(200).json({
-                sucesso: true, 
-                mensagem: 'Lista de categorias', 
-                nResgistros,
+                sucesso: true,
+                mensagem: rows.length > 0 ? 'Categorias encontradas.' : 'Nenhuma categoria encontrada.',
+                nItens: rows.length,
                 dados: rows
             });
+
         } catch (error) {
             return response.status(500).json({
-                sucesso: false, 
-                mensagem: 'Erro na requisição.', 
+                sucesso: false,
+                mensagem: 'Erro ao listar categorias.',
                 dados: error.message
             });
         }

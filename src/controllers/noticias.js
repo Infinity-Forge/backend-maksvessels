@@ -3,28 +3,50 @@ const db = require('../database/connection');
 module.exports = {
     async listarNoticias(request, response) {
         try {
+            const { titulo, autor, data_inicio, data_fim, page = 1, limit = 10 } = request.query;
+            const offset = (parseInt(page) - 1) * parseInt(limit);
+
+            let where = "WHERE 1=1";
+            const values = [];
+
+            if (titulo) {
+                where += " AND not_titulo LIKE ?";
+                values.push(`%${titulo}%`);
+            }
+            if (autor) {
+                where += " AND usu_id = ?";
+                values.push(autor);
+            }
+            if (data_inicio && data_fim) {
+                where += " AND not_data_publicacao BETWEEN ? AND ?";
+                values.push(data_inicio, data_fim);
+            }
+
+            const [[{ total }]] = await db.query(`SELECT COUNT(*) as total FROM NOTICIAS ${where}`, values);
 
             const sql = `
-                SELECT
-                    not_id, usu_id, not_titulo, not_conteudo, not_imagem, not_data_publicacao 
-                FROM NOTICIAS;
+                SELECT not_id, usu_id, not_titulo, not_conteudo, not_imagem, not_data_publicacao
+                FROM NOTICIAS
+                ${where}
+                ORDER BY not_data_publicacao DESC
+                LIMIT ? OFFSET ?
             `;
+            values.push(parseInt(limit), offset);
 
-            const [rows] = await db.query(sql);
-
-            const nRegistros = rows.length;
-
+            const [rows] = await db.query(sql, values);
 
             return response.status(200).json({
-                sucesso: true, 
-                mensagem: 'Lista de noticias',
-                nRegistros,
+                sucesso: true,
+                mensagem: rows.length > 0 ? 'Notícias encontradas.' : 'Nenhuma notícia encontrada.',
+                nItens: rows.length,
+                total,
                 dados: rows
             });
+
         } catch (error) {
             return response.status(500).json({
-                sucesso: false, 
-                mensagem: 'Erro na requisição.', 
+                sucesso: false,
+                mensagem: 'Erro ao listar notícias.',
                 dados: error.message
             });
         }

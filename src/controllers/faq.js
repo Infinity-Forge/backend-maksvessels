@@ -3,33 +3,30 @@ const db = require('../database/connection');
 module.exports = {
     async listarFAQ(request, response) {
         try {
+            const { query } = request.query;
 
             const sql = `
-                SELECT faq_id, usu_id, faq_pergunta, faq_resposta FROM FAQ;
+                SELECT faq_id, usu_id, faq_pergunta, faq_resposta
+                FROM FAQ
+                WHERE faq_pergunta LIKE ? OR faq_resposta LIKE ?;
             `;
 
-            const [rows] = await db.query(sql);
-
-            const nRegistros = rows.length;
-            if (nRegistros === 0) {
-                return response.status(404).json({
-                    sucesso: false, 
-                    mensagem: 'Nenhum registro encontrado.', 
-                    dados: null
-                });
-            }
+            const [rows] = await db.query(sql, [
+                query ? `%${query}%` : `%`,
+                query ? `%${query}%` : `%`
+            ]);
 
             return response.status(200).json({
-                sucesso: true, 
-                mensagem: 'Lista de perguntas do FAQ',
-                nRegistros, 
+                sucesso: true,
+                mensagem: rows.length > 0 ? 'FAQ encontrado.' : 'Nenhuma FAQ encontrada.',
+                nItens: rows.length,
                 dados: rows
             });
-            
+
         } catch (error) {
             return response.status(500).json({
-                sucesso: false, 
-                mensagem: 'Erro na requisição.', 
+                sucesso: false,
+                mensagem: 'Erro ao listar FAQ.',
                 dados: error.message
             });
         }

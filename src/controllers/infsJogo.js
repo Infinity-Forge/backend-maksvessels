@@ -3,27 +3,53 @@ const db = require('../database/connection');
 module.exports = {
     async listarInfsJogo(request, response) {
         try {
+            const { titulo, categoria, autor, id, page = 1, limit = 10 } = request.query;
+            const offset = (parseInt(page) - 1) * parseInt(limit);
+
+            let where = "WHERE 1=1";
+            const values = [];
+
+            if (titulo) {
+                where += " AND inf_titulo LIKE ?";
+                values.push(`%${titulo}%`);
+            }
+            if (categoria) {
+                where += " AND cat_id = ?";
+                values.push(categoria);
+            }
+            if (autor) {
+                where += " AND usu_id = ?";
+                values.push(autor);
+            }
+            if (id) {
+                where += " AND inf_id = ?";
+                values.push(id);
+            }
+
+            const [[{ total }]] = await db.query(`SELECT COUNT(*) as total FROM INF_JOGO ${where}`, values);
 
             const sql = `
-               SELECT
-                    inf_id, cat_id, usu_id, inf_titulo, inf_descricao, inf_imagem 
-                FROM INF_JOGO;
+                SELECT inf_id, cat_id, usu_id, inf_titulo, inf_descricao, inf_imagem
+                FROM INF_JOGO
+                ${where}
+                LIMIT ? OFFSET ?
             `;
+            values.push(parseInt(limit), offset);
 
-            const [rows] = await db.query(sql);
-
-            const nRegistros = rows.length;
+            const [rows] = await db.query(sql, values);
 
             return response.status(200).json({
-                sucesso: true, 
-                mensagem: 'Lista de informações do jogo', 
-                nRegistros,
+                sucesso: true,
+                mensagem: rows.length > 0 ? 'Informações do jogo encontradas.' : 'Nenhuma informação encontrada.',
+                nItens: rows.length,
+                total,
                 dados: rows
             });
+
         } catch (error) {
             return response.status(500).json({
-                sucesso: false, 
-                mensagem: 'Erro na requisição.', 
+                sucesso: false,
+                mensagem: 'Erro ao listar informações do jogo.',
                 dados: error.message
             });
         }

@@ -3,27 +3,30 @@ const db = require('../database/connection');
 module.exports = {
     async listarCompartilhamento(request, response) {
         try {
-           
+            const { noticia, plataforma } = request.query;
+
             const sql = `
-            SELECT comp_id, not_id, comp_plataforma, comp_data FROM COMPARTILHAMENTO;
-            
+                SELECT comp_id, not_id, comp_plataforma, comp_data
+                FROM COMPARTILHAMENTO
+                WHERE not_id LIKE ? AND comp_plataforma LIKE ?;
             `;
-           
-            const [rows] = await db.query(sql);
 
-            const nRegistros = rows.length;
-
+            const [rows] = await db.query(sql, [
+                noticia ? noticia : `%`,
+                plataforma ? `%${plataforma}%` : `%`
+            ]);
 
             return response.status(200).json({
-                sucesso: true, 
-                mensagem: 'Lista de Compartilhamento', 
-                nRegistros,
+                sucesso: true,
+                mensagem: rows.length > 0 ? 'Compartilhamentos encontrados.' : 'Nenhum compartilhamento encontrado.',
+                nItens: rows.length,
                 dados: rows
             });
+
         } catch (error) {
             return response.status(500).json({
-                sucesso: false, 
-                mensagem: 'Erro na requisição.', 
+                sucesso: false,
+                mensagem: 'Erro ao listar compartilhamentos.',
                 dados: error.message
             });
         }

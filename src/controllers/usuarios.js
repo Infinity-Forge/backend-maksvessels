@@ -3,23 +3,57 @@ const db = require('../database/connection');
 module.exports = {
     async listarUsuarios(request, response) {
         try {
+            const { nome, email, tipo, ativo, data_inicio, data_fim, page = 1, limit = 10 } = request.query;
+            const offset = (parseInt(page) - 1) * parseInt(limit);
+
+            let where = "WHERE 1=1";
+            const values = [];
+
+            if (nome) {
+                where += " AND usu_nome LIKE ?";
+                values.push(`%${nome}%`);
+            }
+            if (email) {
+                where += " AND usu_email LIKE ?";
+                values.push(`%${email}%`);
+            }
+            if (tipo) {
+                where += " AND usu_tipo = ?";
+                values.push(tipo);
+            }
+            if (ativo) {
+                where += " AND usu_ativo = ?";
+                values.push(ativo);
+            }
+            if (data_inicio && data_fim) {
+                where += " AND usu_data_cadastro BETWEEN ? AND ?";
+                values.push(data_inicio, data_fim);
+            }
+
+            const [[{ total }]] = await db.query(`SELECT COUNT(*) as total FROM USUARIOS ${where}`, values);
+
             const sql = `
-                SELECT usu_id, usu_nome, usu_email, usu_senha, usu_data_cadastro, usu_tipo, usu_ativo FROM USUARIOS;
+                SELECT usu_id, usu_nome, usu_email, usu_tipo, usu_data_cadastro, usu_ativo
+                FROM USUARIOS
+                ${where}
+                LIMIT ? OFFSET ?
             `;
-            
-            const [rows] = await db.query(sql);
-            const nResgistros = rows.length;
+            values.push(parseInt(limit), offset);
+
+            const [rows] = await db.query(sql, values);
 
             return response.status(200).json({
-                sucesso: true, 
-                mensagem: 'Lista de usuários', 
-                nResgistros,
+                sucesso: true,
+                mensagem: rows.length > 0 ? 'Lista de usuários encontrada.' : 'Nenhum usuário encontrado.',
+                nItens: rows.length,
+                total,
                 dados: rows
             });
+
         } catch (error) {
             return response.status(500).json({
-                sucesso: false, 
-                mensagem: 'Erro na requisição.', 
+                sucesso: false,
+                mensagem: 'Erro ao listar usuários.',
                 dados: error.message
             });
         }
