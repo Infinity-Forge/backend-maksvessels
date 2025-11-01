@@ -35,13 +35,46 @@ CREATE TABLE IF NOT EXISTS NOTICIAS (
     not_data_publicacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS INF_JOGO (
-    inf_id INT PRIMARY KEY AUTO_INCREMENT,
-    cat_id INT NOT NULL,
+-- NOVAS TABELAS (substituindo INF_JOGO)
+CREATE TABLE IF NOT EXISTS PERSONAGENS (
+    pers_id INT PRIMARY KEY AUTO_INCREMENT,
     usu_id INT NOT NULL,
-    inf_titulo VARCHAR(50) NOT NULL,
-    inf_descricao VARCHAR(500) NOT NULL,
-    inf_imagem VARCHAR(255)
+    pers_tipo INT NOT NULL, -- 0 = guardião, 1 = cavaleiro, 2 = anjo, 3 = inimigo
+    pers_nome VARCHAR(100) NOT NULL,
+    pers_src VARCHAR(255) NOT NULL,
+    pers_alt VARCHAR(100),
+    pers_descricao TEXT,
+    pers_frase VARCHAR(255),
+    pers_data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usu_id) REFERENCES USUARIOS(usu_id)
+);
+
+CREATE TABLE IF NOT EXISTS ARSENAL (
+    ars_id INT PRIMARY KEY AUTO_INCREMENT,
+    usu_id INT NOT NULL,
+    ars_tipo INT NOT NULL, -- 0 = pistola, 1 = faca, 2 = rifle
+    ars_nome VARCHAR(100) NOT NULL,
+    ars_src VARCHAR(255) NOT NULL,
+    ars_alt VARCHAR(100),
+    ars_dano INT,
+    ars_raridade VARCHAR(50),
+    ars_municao INT,
+    ars_alcance INT,
+    ars_taxa_disparo DECIMAL(5,2),
+    ars_taxa_acerto DECIMAL(5,2),
+    ars_data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usu_id) REFERENCES USUARIOS(usu_id)
+);
+
+CREATE TABLE IF NOT EXISTS MAPAS (
+    mapa_id INT PRIMARY KEY AUTO_INCREMENT,
+    usu_id INT NOT NULL,
+    mapa_src VARCHAR(255) NOT NULL,
+    mapa_alt VARCHAR(100),
+    mapa_nome VARCHAR(100) NOT NULL,
+    mapa_descricao TEXT,
+    mapa_data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usu_id) REFERENCES USUARIOS(usu_id)
 );
 
 CREATE TABLE IF NOT EXISTS SUPORTE (

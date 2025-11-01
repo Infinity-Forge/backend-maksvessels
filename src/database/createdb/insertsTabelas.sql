@@ -70,39 +70,42 @@ INSERT INTO COMPARTILHAMENTO (not_id, comp_plataforma) VALUES
 
 
 -- Inserts para a tabela CATEGORIA
--- esperando joão fazer
 INSERT INTO CATEGORIA (cat_nome) VALUES
 ('Armas'),
 ('Personagens'),
 ('Mapas');
 
 
--- Inserts para a tabela INF_JOGO 
--- Esperando o joão fazer
-INSERT INTO INF_JOGO (cat_id, usu_id, inf_titulo, inf_descricao, inf_imagem) VALUES
--- Armas
-(1, 1, 'Espada Flamejante', 'Uma espada lendária que emana chamas e pode causar dano extra contra inimigos de gelo.', 'espada_flamejante.jpg'),
-(1, 1, 'Arco Sombrio', 'Um arco feito de um material desconhecido que permite disparar flechas silenciosas e letais.', 'arco_sombrio.jpg'),
-(1, 1, 'Martelo Titânico', 'Uma arma pesada usada por guerreiros gigantes. Seu impacto pode derrubar inimigos instantaneamente.', 'martelo_titanico.jpg'),
-(1, 1, 'Lança do Caos', 'Uma lança encantada que pode canalizar energia mágica e lançar rajadas destrutivas.', 'lanca_caos.jpg'),
-(1, 1, 'Adagas Sombrias', 'Lâminas duplas que permitem ataques rápidos e silenciosos, ideais para assassinos.', 'adagas_sombrias.jpg'),
-(1, 1, 'Machado do Deserto', 'Uma arma usada pelos guerreiros nômades. Causa dano cortante e perfurante.', 'machado_deserto.jpg'),
+-- Inserts para a tabela PERSONAGENS
+INSERT INTO PERSONAGENS (usu_id, pers_tipo, pers_nome, pers_src, pers_alt, pers_descricao, pers_frase) VALUES
+(1, 0, 'Kael, o Guardião', 'kael_guardiao.jpg', 'Kael em armadura dourada', 'Um guerreiro habilidoso que protege as terras sagradas com sua armadura encantada. Mestre em combate corpo a corpo.', 'A luz sempre prevalecerá sobre as trevas!'),
+(1, 1, 'Sir Alistair, o Cavaleiro', 'alistair_cavaleiro.jpg', 'Sir Alistair com espada longa', 'Cavaleiro da Ordem Real, jurado a proteger os inocentes. Sua lealdade é tão forte quanto sua espada.', 'Pela honra e pela justiça!'),
+(1, 2, 'Seraphina, a Anja', 'seraphina_anja.jpg', 'Seraphina com asas brancas', 'Ser celestial enviada para guiar os heróis. Suas asas brilham com a luz divina.', 'A esperança nunca morre, apenas renasce.'),
+(1, 3, 'Morlock, o Corrompido', 'morlock_corrompido.jpg', 'Morlock com armadura negra', 'Antigo herói consumido pela escuridão. Agora lidera as forças do mal com poder devastador.', 'A escuridão consome tudo!'),
+(1, 0, 'Lena, a Guardiã da Floresta', 'lena_guardiã.jpg', 'Lena com arco de madeira', 'Protetora das florestas antigas, usa magia natural e arco para defender seu lar.', 'A natureza sempre encontra um caminho.'),
+(1, 1, 'Dante, o Cavaleiro das Sombras', 'dante_cavaleiro.jpg', 'Dante com armadura prateada', 'Cavaleiro que abandonou sua ordem para seguir seu próprio código de honra nas sombras.', 'Às vezes, a justiça precisa de sombras.');
 
--- Personagens
-(2, 1, 'Kael, o Guardião', 'Um guerreiro habilidoso que protege as terras sagradas com sua armadura encantada.', 'kael_guardiao.jpg'),
-(2, 1, 'Selene, a Assassina', 'Uma mercenária ágil que utiliza lâminas duplas e se move nas sombras.', 'selene_assassina.jpg'),
-(2, 1, 'Drogon, o Conjurador', 'Um feiticeiro que domina o fogo e pode invocar criaturas das chamas.', 'drogon_conjurador.jpg'),
-(2, 1, 'Ragnar, o Bárbaro', 'Um guerreiro implacável que usa um machado gigante para devastar seus inimigos.', 'ragnar_barbaro.jpg'),
-(2, 1, 'Lyria, a Arqueira Celeste', 'Uma arqueira com habilidades divinas, capaz de disparar flechas encantadas.', 'lyria_arqueira.jpg'),
-(2, 1, 'Gorath, o Gigante', 'Um colosso de pedra que usa sua força bruta para esmagar qualquer adversário.', 'gorath_gigante.jpg'),
 
--- Mapas
-(3, 1, 'Vale Sombrio', 'Uma floresta densa coberta por névoa, lar de criaturas misteriosas.', 'vale_sombrio.jpg'),
-(3, 1, 'Fortaleza de Aço', 'Uma cidade fortificada repleta de armadilhas e inimigos mecânicos.', 'fortaleza_aco.jpg'),
-(3, 1, 'Deserto da Perdição', 'Um deserto vasto onde tempestades de areia escondem segredos antigos.', 'deserto_perdicao.jpg'),
-(3, 1, 'Montanhas Gélidas', 'Região congelada habitada por bestas lendárias e tribos resistentes ao frio.', 'montanhas_gelidas.jpg'),
-(3, 1, 'Ruínas Abandonadas', 'Restos de uma civilização antiga, cheia de armadilhas e enigmas.', 'ruinas_abandonadas.jpg'),
-(3, 1, 'Caverna das Almas', 'Uma caverna profunda onde ecoam os sussurros dos antigos guerreiros.', 'caverna_almas.jpg');
+-- Inserts para a tabela ARSENAL
+INSERT INTO ARSENAL (usu_id, ars_tipo, ars_nome, ars_src, ars_alt, ars_dano, ars_raridade, ars_municao, ars_alcance, ars_taxa_disparo, ars_taxa_acerto) VALUES
+(1, 0, 'Espada Flamejante', 'espada_flamejante.jpg', 'Espada com lâmina em chamas', 85, 'Lendária', NULL, 2, NULL, 95.0),
+(1, 0, 'Pistola de Plasma', 'pistola_plasma.jpg', 'Pistola futurista azul', 45, 'Rara', 12, 15, 2.5, 88.0),
+(1, 1, 'Adagas Sombrias', 'adagas_sombrias.jpg', 'Par de adagas negras', 60, 'Épica', NULL, 1, NULL, 98.0),
+(1, 2, 'Rifle de Precisão Celestial', 'rifle_celestial.jpg', 'Rifle longo com detalhes dourados', 120, 'Lendária', 5, 50, 0.8, 99.5),
+(1, 0, 'Machado do Deserto', 'machado_deserto.jpg', 'Machado de batalha enferrujado', 75, 'Comum', NULL, 3, NULL, 85.0),
+(1, 2, 'Arco Sombrio', 'arco_sombrio.jpg', 'Arco negro com corda prateada', 65, 'Rara', 20, 30, 1.2, 92.0),
+(1, 1, 'Lâminas Gêmeas do Caos', 'laminas_caos.jpg', 'Par de lâminas curvas energéticas', 55, 'Épica', NULL, 2, NULL, 96.0),
+(1, 2, 'Besta Automática', 'besta_automatica.jpg', 'Besta moderna com carregador', 70, 'Rara', 8, 25, 1.8, 90.0);
+
+
+-- Inserts para a tabela MAPAS
+INSERT INTO MAPAS (usu_id, mapa_src, mapa_alt, mapa_nome, mapa_descricao) VALUES
+(1, 'vale_sombrio.jpg', 'Floresta densa com névoa', 'Vale Sombrio', 'Uma floresta densa coberta por névoa perpétua, lar de criaturas misteriosas e ruínas antigas. A visibilidade é limitada e sons estranhos ecoam entre as árvores.'),
+(1, 'fortaleza_aco.jpg', 'Fortaleza metálica futurista', 'Fortaleza de Aço', 'Uma cidade fortificada repleta de armadilhas e inimigos mecânicos. Torres de vigilância e paredes imponentes protegem segredos tecnológicos valiosos.'),
+(1, 'deserto_perdicao.jpg', 'Deserto vasto com dunas', 'Deserto da Perdição', 'Um deserto vasto onde tempestades de areia escondem segredos antigos. Oásis ocultos e ruínas de civilizações perdidas aguardam para serem descobertos.'),
+(1, 'montanhas_gelidas.jpg', 'Montanhas cobertas de neve', 'Montanhas Gélidas', 'Região congelada habitada por bestas lendárias e tribos resistentes ao frio. Ventos cortantes e cavernas de gelo escondem tesouros ancestrais.'),
+(1, 'ruinas_abandonadas.jpg', 'Ruínas de templo antigo', 'Ruínas Abandonadas', 'Restos de uma civilização antiga, cheia de armadilhas e enigmas. Hieróglifos misteriosos contam histórias de um passado glorioso.'),
+(1, 'caverna_almas.jpg', 'Caverna com cristais brilhantes', 'Caverna das Almas', 'Uma caverna profunda onde ecoam os sussurros dos antigos guerreiros. Cristais luminosos iluminam passagens secretas e câmaras ocultas.');
 
 
 -- Inserts para a tabela ASSUNTOS
