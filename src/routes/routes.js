@@ -6,9 +6,11 @@ const CategoriaController = require('../controllers/categoria');
 const AssuntosController = require('../controllers/assuntos');
 const FAQController = require('../controllers/faq');
 const NoticiasController = require('../controllers/noticias');
-const infsJogoController = require('../controllers/infsJogo');
 const SuporteController = require('../controllers/suporte');
 const CompartilhamentoController = require('../controllers/compartilhamento');
+const PersonagensController = require('../controllers/personagens');
+const ArsenalController = require('../controllers/arsenal');
+const MapasController = require('../controllers/mapas');
 
 router.get('/usuarios', UsuariosController.listarUsuarios); 
 router.post('/usuarios', UsuariosController.cadastrarUsuarios); 
@@ -37,10 +39,20 @@ router.post('/noticias', NoticiasController.cadastrarNoticias);
 router.patch('/noticias/:id', NoticiasController.editarNoticias); 
 router.delete('/noticias/:id', NoticiasController.apagarNoticias);
 
-router.get('/infsJogo', infsJogoController.listarInfsJogo); 
-router.post('/infsJogo', infsJogoController.cadastrarInfsJogo); 
-router.patch('/infsJogo/:id', infsJogoController.editarInfsJogo); 
-router.delete('/infsJogo/:id', infsJogoController.apagarInfsJogo);
+router.get('/personagens', PersonagensController.listarPersonagens);
+router.post('/personagens', PersonagensController.cadastrarPersonagem);
+router.put('/personagens/:id', PersonagensController.editarPersonagem);
+router.delete('/personagens/:id', PersonagensController.apagarPersonagem);
+
+router.get('/arsenal', ArsenalController.listarArsenal);
+router.post('/arsenal', ArsenalController.cadastrarArsenal);
+router.put('/arsenal/:id', ArsenalController.editarArsenal);
+router.delete('/arsenal/:id', ArsenalController.apagarArsenal);
+
+router.get('/mapas', MapasController.listarMapas);
+router.post('/mapas', MapasController.cadastrarMapa);
+router.put('/mapas/:id', MapasController.editarMapa);
+router.delete('/mapas/:id', MapasController.apagarMapa);
 
 router.get('/suporte', SuporteController.listarSuporte); 
 router.post('/suporte', SuporteController.cadastrarSuporte); 
