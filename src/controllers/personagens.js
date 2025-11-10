@@ -3,8 +3,7 @@ const db = require('../database/connection');
 module.exports = {
     async listarPersonagens(request, response) {
         try {
-            const { nome, tipo, page = 1, limit = 10 } = request.query;
-            const offset = (parseInt(page) - 1) * parseInt(limit);
+            const { nome, tipo } = request.query;
 
             let where = "WHERE 1=1";
             const values = [];
@@ -25,9 +24,7 @@ module.exports = {
                 FROM PERSONAGENS
                 ${where}
                 ORDER BY pers_nome
-                LIMIT ? OFFSET ?
             `;
-            values.push(parseInt(limit), offset);
 
             const [rows] = await db.query(sql, values);
 
@@ -43,6 +40,42 @@ module.exports = {
             return response.status(500).json({
                 sucesso: false,
                 mensagem: 'Erro ao listar personagens.',
+                dados: error.message
+            });
+        }
+    },
+
+    async listarPersonagemPorId(request, response) {
+        try {
+            const { id } = request.params;
+
+            const sql = `
+                SELECT pers_id, usu_id, pers_tipo, pers_nome, pers_src, pers_alt, pers_descricao, pers_frase, pers_data_criacao
+                FROM PERSONAGENS
+                WHERE pers_id = ?;
+            `;
+
+            const values = [id];
+            const [rows] = await db.query(sql, values);
+
+            if (rows.length === 0) {
+                return response.status(404).json({
+                    sucesso: false,
+                    mensagem: `Personagem ${id} não encontrado!`,
+                    dados: null
+                });
+            }
+
+            return response.status(200).json({
+                sucesso: true,
+                mensagem: `Personagem ${id} encontrado com sucesso!`,
+                dados: rows[0]
+            });
+
+        } catch (error) {
+            return response.status(500).json({
+                sucesso: false,
+                mensagem: 'Erro ao buscar personagem.',
                 dados: error.message
             });
         }

@@ -40,6 +40,7 @@ router.patch('/noticias/:id', NoticiasController.editarNoticias);
 router.delete('/noticias/:id', NoticiasController.apagarNoticias);
 
 router.get('/personagens', PersonagensController.listarPersonagens);
+router.get('/personagens/:id', PersonagensController.listarPersonagemPorId);
 router.post('/personagens', PersonagensController.cadastrarPersonagem);
 router.put('/personagens/:id', PersonagensController.editarPersonagem);
 router.delete('/personagens/:id', PersonagensController.apagarPersonagem);
