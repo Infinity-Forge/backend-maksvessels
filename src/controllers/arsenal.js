@@ -3,8 +3,7 @@ const db = require('../database/connection');
 module.exports = {
     async listarArsenal(request, response) {
         try {
-            const { nome, tipo, raridade, page = 1, limit = 10 } = request.query;
-            const offset = (parseInt(page) - 1) * parseInt(limit);
+            const { nome, tipo, raridade } = request.query;
 
             let where = "WHERE 1=1";
             const values = [];
@@ -26,13 +25,11 @@ module.exports = {
 
             const sql = `
                 SELECT ars_id, usu_id, ars_tipo, ars_nome, ars_src, ars_alt, ars_dano, ars_raridade, 
-                       ars_municao, ars_alcance, ars_taxa_disparo, ars_taxa_acerto, ars_data_criacao
+                    ars_municao, ars_alcance, ars_taxa_disparo, ars_taxa_acerto, ars_data_criacao
                 FROM ARSENAL
                 ${where}
                 ORDER BY ars_nome
-                LIMIT ? OFFSET ?
             `;
-            values.push(parseInt(limit), offset);
 
             const [rows] = await db.query(sql, values);
 
@@ -48,6 +45,43 @@ module.exports = {
             return response.status(500).json({
                 sucesso: false,
                 mensagem: 'Erro ao listar arsenal.',
+                dados: error.message
+            });
+        }
+    },
+
+    async listarArmaPorId(request, response) {
+        try {
+            const { id } = request.params;
+
+            const sql = `
+                SELECT ars_id, usu_id, ars_tipo, ars_nome, ars_src, ars_alt, ars_dano, ars_raridade, 
+                    ars_municao, ars_alcance, ars_taxa_disparo, ars_taxa_acerto, ars_data_criacao
+                FROM ARSENAL
+                WHERE ars_id = ?;
+            `;
+
+            const values = [id];
+            const [rows] = await db.query(sql, values);
+
+            if (rows.length === 0) {
+                return response.status(404).json({
+                    sucesso: false,
+                    mensagem: `Item de arsenal ${id} não encontrado!`,
+                    dados: null
+                });
+            }
+
+            return response.status(200).json({
+                sucesso: true,
+                mensagem: `Item de arsenal ${id} encontrado com sucesso!`,
+                dados: rows[0]
+            });
+
+        } catch (error) {
+            return response.status(500).json({
+                sucesso: false,
+                mensagem: 'Erro ao buscar item do arsenal.',
                 dados: error.message
             });
         }

@@ -46,6 +46,7 @@ router.put('/personagens/:id', PersonagensController.editarPersonagem);
 router.delete('/personagens/:id', PersonagensController.apagarPersonagem);
 
 router.get('/arsenal', ArsenalController.listarArsenal);
+router.get('/arsenal/:id', ArsenalController.listarArmaPorId);
 router.post('/arsenal', ArsenalController.cadastrarArsenal);
 router.put('/arsenal/:id', ArsenalController.editarArsenal);
 router.delete('/arsenal/:id', ArsenalController.apagarArsenal);
