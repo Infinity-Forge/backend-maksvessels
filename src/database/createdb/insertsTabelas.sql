@@ -78,34 +78,70 @@ INSERT INTO CATEGORIA (cat_nome) VALUES
 
 -- Inserts para a tabela PERSONAGENS
 INSERT INTO PERSONAGENS (usu_id, pers_tipo, pers_nome, pers_src, pers_alt, pers_descricao, pers_frase) VALUES
-(1, 0, 'Kael, o Guardião', 'kael_guardiao.jpg', 'Kael em armadura dourada', 'Um guerreiro habilidoso que protege as terras sagradas com sua armadura encantada. Mestre em combate corpo a corpo.', 'A luz sempre prevalecerá sobre as trevas!'),
-(1, 1, 'Sir Alistair, o Cavaleiro', 'alistair_cavaleiro.jpg', 'Sir Alistair com espada longa', 'Cavaleiro da Ordem Real, jurado a proteger os inocentes. Sua lealdade é tão forte quanto sua espada.', 'Pela honra e pela justiça!'),
-(1, 2, 'Seraphina, a Anja', 'seraphina_anja.jpg', 'Seraphina com asas brancas', 'Ser celestial enviada para guiar os heróis. Suas asas brilham com a luz divina.', 'A esperança nunca morre, apenas renasce.'),
-(1, 3, 'Morlock, o Corrompido', 'morlock_corrompido.jpg', 'Morlock com armadura negra', 'Antigo herói consumido pela escuridão. Agora lidera as forças do mal com poder devastador.', 'A escuridão consome tudo!'),
-(1, 0, 'Lena, a Guardiã da Floresta', 'lena_guardiã.jpg', 'Lena com arco de madeira', 'Protetora das florestas antigas, usa magia natural e arco para defender seu lar.', 'A natureza sempre encontra um caminho.'),
-(1, 1, 'Dante, o Cavaleiro das Sombras', 'dante_cavaleiro.jpg', 'Dante com armadura prateada', 'Cavaleiro que abandonou sua ordem para seguir seu próprio código de honra nas sombras.', 'Às vezes, a justiça precisa de sombras.');
+(1, 0, 'Rato', '/rato.jpg', 'Imagem do Rato', 'Lorem ipsum dolor sit amet.', 'Sempre alerta!'),
+(1, 0, 'Urso', '/urso.jpg', 'Imagem do Urso', 'Lorem ipsum dolor sit amet.', 'Força e coragem.'),
+(1, 0, 'Gata', '/gata.jpg', 'Imagem da Gata', 'Lorem ipsum dolor sit amet.', 'Vamos juntos!'),
+(1, 0, 'Peixe Boi', '/peixeBoi.jpg', 'Imagem do Peixe Boi', 'Lorem ipsum dolor sit amet.', 'Sempre lutando!'),
+(1, 1, 'Peste', '/peste.jpg', 'Imagem do Cavaleiro da Peste', 'Lorem ipsum dolor sit amet.', 'Cuidado com a peste!'),
+(1, 1, 'Morte', '/morte.jpg', 'Imagem do Cavaleiro da Morte', 'Lorem ipsum dolor sit amet.', 'A morte é certa.'),
+(1, 1, 'Guerra', '/guerra.jpg', 'Imagem de um Cavaleiro', 'Lorem ipsum dolor sit amet.', 'Lutando sempre!'),
+(1, 1, 'Fome', '/fome.jpg', 'Imagem do Cavaleiro da Fome', 'Lorem ipsum dolor sit amet.', 'A fome não espera.'),
+(1, 2, 'Anjos', '/anjos.jpg', 'Imagem dos Anjos', 'Lorem ipsum dolor sit amet.', 'Sempre protegendo.'),
+(1, 2, 'Arcanjos', '/arcanjos.jpg', 'Imagem dos Arcanjos', 'Lorem ipsum dolor sit amet.', 'Mensageiros divinos.'),
+(1, 2, 'Querubins', '/querubins.jpg', 'Imagem dos Querubins', 'Lorem ipsum dolor sit amet.', 'Pequenos protetores.'),
+(1, 2, 'Serafins', '/serafins.jpg', 'Imagem dos Serafins', 'Lorem ipsum dolor sit amet.', 'Chama sagrada.'),
+(1, 2, 'Anjo Miguel', '/anjoMiguel.jpg', 'Imagem do Anjo Miguel', 'Lorem ipsum dolor sit amet.', 'O guerreiro divino.'),
+(1, 2, 'Anjo Gabriel', '/anjoGabriel.jpg', 'Imagem do Anjo Gabriel', 'Lorem ipsum dolor sit amet.', 'O mensageiro sagrado.'),
+(1, 3, 'Luffy', '/luffy.jpg', 'Imagem de um Inimigo', 'Lorem ipsum dolor sit amet.', 'Inimigo!'),
+(1, 3, 'Luffy', '/luffy.jpg', 'Imagem de um Inimigo', 'Lorem ipsum dolor sit amet.', 'Perigo à frente!'),
+(1, 3, 'Luffy', '/luffy.jpg', 'Imagem de um Inimigo', 'Lorem ipsum dolor sit amet.', 'Cuidado!'),
+(1, 3, 'Luffy', '/luffy.jpg', 'Imagem de um Inimigo', 'Lorem ipsum dolor sit amet.', 'Atenção!'),
+(1, 3, 'Luffy', '/luffy.jpg', 'Imagem de um Inimigo', 'Lorem ipsum dolor sit amet.', 'Ação rápida!'),
+(1, 3, 'Luffy', '/luffy.jpg', 'Imagem de um Inimigo', 'Lorem ipsum dolor sit amet.', 'Perigo!'),
+(1, 3, 'Luffy', '/luffy.jpg', 'Imagem de um Inimigo', 'Lorem ipsum dolor sit amet.', 'Fique atento!'),
+(1, 3, 'Luffy', '/luffy.jpg', 'Imagem de um Inimigo', 'Lorem ipsum dolor sit amet.', 'Alerta!'),
+(1, 3, 'Luffy', '/luffy.jpg', 'Imagem de um Inimigo', 'Lorem ipsum dolor sit amet.', 'Perigo eminente!'),
+(1, 3, 'Luffy', '/luffy.jpg', 'Imagem de um Inimigo', 'Lorem ipsum dolor sit amet.', 'Atenção máxima!'),
+(1, 3, 'Luffy', '/luffy.jpg', 'Imagem de um Inimigo', 'Lorem ipsum dolor sit amet.', 'Perigo!'),
+(1, 3, 'Luffy', '/luffy.jpg', 'Imagem de um Inimigo', 'Lorem ipsum dolor sit amet.', 'Cuidado!'),
+(1, 3, 'Luffy', '/luffy.jpg', 'Imagem de um Inimigo', 'Lorem ipsum dolor sit amet.', 'Fique alerta!');
 
 
 -- Inserts para a tabela ARSENAL
 INSERT INTO ARSENAL (usu_id, ars_tipo, ars_nome, ars_src, ars_alt, ars_dano, ars_raridade, ars_municao, ars_alcance, ars_taxa_disparo, ars_taxa_acerto) VALUES
-(1, 0, 'Espada Flamejante', 'espada_flamejante.jpg', 'Espada com lâmina em chamas', 85, 'Lendária', NULL, 2, NULL, 95.0),
-(1, 0, 'Pistola de Plasma', 'pistola_plasma.jpg', 'Pistola futurista azul', 45, 'Rara', 12, 15, 2.5, 88.0),
-(1, 1, 'Adagas Sombrias', 'adagas_sombrias.jpg', 'Par de adagas negras', 60, 'Épica', NULL, 1, NULL, 98.0),
-(1, 2, 'Rifle de Precisão Celestial', 'rifle_celestial.jpg', 'Rifle longo com detalhes dourados', 120, 'Lendária', 5, 50, 0.8, 99.5),
-(1, 0, 'Machado do Deserto', 'machado_deserto.jpg', 'Machado de batalha enferrujado', 75, 'Comum', NULL, 3, NULL, 85.0),
-(1, 2, 'Arco Sombrio', 'arco_sombrio.jpg', 'Arco negro com corda prateada', 65, 'Rara', 20, 30, 1.2, 92.0),
-(1, 1, 'Lâminas Gêmeas do Caos', 'laminas_caos.jpg', 'Par de lâminas curvas energéticas', 55, 'Épica', NULL, 2, NULL, 96.0),
-(1, 2, 'Besta Automática', 'besta_automatica.jpg', 'Besta moderna com carregador', 70, 'Rara', 8, 25, 1.8, 90.0);
+(1, 0, 'Pistola', '/arma.png', 'Pistola', 18, 'Comum', 9, 50, 450, 48),
+(1, 0, 'Pistola', '/arma.png', 'Pistola', 20, 'Comum', 9, 55, 420, 50),
+(1, 0, 'Pistola', '/arma.png', 'Pistola', 24, 'Incomum', 9, 60, 500, 56),
+(1, 0, 'Pistola', '/arma.png', 'Pistola', 26, 'Raro', 9, 65, 520, 62),
+(1, 0, 'Pistola', '/arma.png', 'Pistola', 22, 'Incomum', 9, 58, 470, 54),
+(1, 0, 'Pistola', '/arma.png', 'Pistola', 28, 'Raro', 9, 68, 540, 64),
+(1, 0, 'Pistola', '/arma.png', 'Pistola', 30, 'Épico', 9, 70, 560, 68),
+(1, 0, 'Pistola', '/arma.png', 'Pistola', 16, 'Comum', 9, 45, 400, 45),
+(1, 1, 'Faca', '/arma.png', 'Faca', 48, 'Comum', NULL, 1.5, 90, 85),
+(1, 1, 'Faca', '/arma.png', 'Faca', 55, 'Incomum', NULL, 1.5, 80, 88),
+(1, 1, 'Faca', '/arma.png', 'Faca', 40, 'Comum', NULL, 1.2, 100, 82),
+(1, 1, 'Faca', '/arma.png', 'Faca', 60, 'Raro', NULL, 1.8, 75, 90),
+(1, 1, 'Faca', '/arma.png', 'Faca', 46, 'Comum', NULL, 1.3, 95, 83),
+(1, 1, 'Faca', '/arma.png', 'Faca', 52, 'Incomum', NULL, 1.6, 85, 86),
+(1, 1, 'Faca', '/arma.png', 'Faca', 58, 'Raro', NULL, 1.7, 78, 89),
+(1, 1, 'Faca', '/arma.png', 'Faca', 42, 'Comum', NULL, 1.4, 98, 81),
+(1, 2, 'Riffle', '/arma.png', 'Riffle', 62, 'Comum', 556, 600, 600, 54),
+(1, 2, 'Riffle', '/arma.png', 'Riffle', 74, 'Incomum', 556, 650, 650, 58),
+(1, 2, 'Riffle', '/arma.png', 'Riffle', 88, 'Raro', 762, 800, 520, 66),
+(1, 2, 'Riffle', '/arma.png', 'Riffle', 70, 'Incomum', 556, 700, 620, 60),
+(1, 2, 'Riffle', '/arma.png', 'Riffle', 95, 'Épico', 762, 850, 480, 72),
+(1, 2, 'Riffle', '/arma.png', 'Riffle', 66, 'Comum', 556, 620, 610, 55),
+(1, 2, 'Riffle', '/arma.png', 'Riffle', 82, 'Raro', 762, 780, 540, 64),
+(1, 2, 'Riffle', '/arma.png', 'Riffle', 58, 'Comum', 556, 590, 630, 52);
 
 
 -- Inserts para a tabela MAPAS
 INSERT INTO MAPAS (usu_id, mapa_src, mapa_alt, mapa_nome, mapa_descricao) VALUES
-(1, 'vale_sombrio.jpg', 'Floresta densa com névoa', 'Vale Sombrio', 'Uma floresta densa coberta por névoa perpétua, lar de criaturas misteriosas e ruínas antigas. A visibilidade é limitada e sons estranhos ecoam entre as árvores.'),
-(1, 'fortaleza_aco.jpg', 'Fortaleza metálica futurista', 'Fortaleza de Aço', 'Uma cidade fortificada repleta de armadilhas e inimigos mecânicos. Torres de vigilância e paredes imponentes protegem segredos tecnológicos valiosos.'),
-(1, 'deserto_perdicao.jpg', 'Deserto vasto com dunas', 'Deserto da Perdição', 'Um deserto vasto onde tempestades de areia escondem segredos antigos. Oásis ocultos e ruínas de civilizações perdidas aguardam para serem descobertos.'),
-(1, 'montanhas_gelidas.jpg', 'Montanhas cobertas de neve', 'Montanhas Gélidas', 'Região congelada habitada por bestas lendárias e tribos resistentes ao frio. Ventos cortantes e cavernas de gelo escondem tesouros ancestrais.'),
-(1, 'ruinas_abandonadas.jpg', 'Ruínas de templo antigo', 'Ruínas Abandonadas', 'Restos de uma civilização antiga, cheia de armadilhas e enigmas. Hieróglifos misteriosos contam histórias de um passado glorioso.'),
-(1, 'caverna_almas.jpg', 'Caverna com cristais brilhantes', 'Caverna das Almas', 'Uma caverna profunda onde ecoam os sussurros dos antigos guerreiros. Cristais luminosos iluminam passagens secretas e câmaras ocultas.');
+(1, '/mapa1.png', 'Mapa Principal', 'Mapa Principal', 'Este é o mapa principal do jogo'),
+(1, '/mapa2.png', 'Mapa Principal', 'Mapa Principal', 'Este é o mapa principal do jogo.'),
+(1, '/mapa3.png', 'Mapa Principal', 'Mapa Principal', 'Este é o mapa principal do jogo.'),
+(1, '/mapa4.png', 'Mapa Principal', 'Mapa Principal', 'Este é o mapa principal do jogo.'),
+(1, '/mapa5.png', 'Mapa Principal', 'Mapa Principal', 'Este é o mapa principal do jogo.');
 
 
 -- Inserts para a tabela ASSUNTOS
