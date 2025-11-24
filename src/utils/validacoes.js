@@ -12,7 +12,7 @@ const validarTipoArma = (tipo) => {
 };
 
 const validarRaridade = (raridade) => {
-    const raridadesValidas = ['Comum', 'Raro', 'Épico', 'Lendário'];
+    const raridadesValidas = ['Comum', 'Incomum', 'Raro', 'Épico', 'Lendário'];
     return raridadesValidas.includes(raridade);
 };
 

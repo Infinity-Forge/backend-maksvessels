@@ -17,7 +17,6 @@ const autenticar = async (request, response, next) => {
             authHeader = authHeader.substring(7);
         }
 
-        // Verifica se o token ainda está vazio
         if (!authHeader) {
             return response.status(401).json({
                 sucesso: false,
@@ -25,7 +24,7 @@ const autenticar = async (request, response, next) => {
             });
         }
 
-        // Decodifica/verifica o token JWT
+        // CORREÇÃO: Verifica se é um JWT válido
         const payload = jwt.verify(authHeader, process.env.JWT_SECRET);
 
         if (!payload || !payload.usu_id) {
@@ -35,7 +34,7 @@ const autenticar = async (request, response, next) => {
             });
         }
 
-        // Verifica usuário no banco
+        // Verifica usuário no banco (opcional, mas recomendado para verificar se ainda está ativo)
         const [resultado] = await db.query(
             'SELECT usu_id, usu_nome, usu_tipo FROM USUARIOS WHERE usu_id = ? AND usu_ativo = 1',
             [payload.usu_id]
@@ -48,12 +47,23 @@ const autenticar = async (request, response, next) => {
             });
         }
 
-        // Salva o usuário autenticado na requisição
         request.usuario = resultado[0];
-
         next();
 
     } catch (error) {
+        // CORREÇÃO: Mensagem mais específica para diferentes tipos de erro JWT
+        if (error.name === 'TokenExpiredError') {
+            return response.status(401).json({
+                sucesso: false,
+                mensagem: 'Token expirado.'
+            });
+        } else if (error.name === 'JsonWebTokenError') {
+            return response.status(401).json({
+                sucesso: false,
+                mensagem: 'Token inválido.'
+            });
+        }
+        
         return response.status(401).json({
             sucesso: false,
             mensagem: 'Erro na autenticação.',
@@ -62,6 +72,7 @@ const autenticar = async (request, response, next) => {
     }
 };
 
+// CORREÇÃO: Adicionar a função autorizar que estava faltando
 const autorizar = (...tiposPermitidos) => {
     return (request, response, next) => {
         if (!request.usuario || !tiposPermitidos.includes(request.usuario.usu_tipo)) {

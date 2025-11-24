@@ -1,6 +1,7 @@
 const db = require('../database/connection');
 const { criptografarSenha, verificarSenha } = require('../utils/criptografia');
 const { validarEmail, validarTipoUsuario } = require('../utils/validacoes');
+const jwt = require('jsonwebtoken');
 
 module.exports = {
     async listarUsuarios(request, response) {
@@ -168,6 +169,17 @@ module.exports = {
                 });
             }
 
+            // CORREÇÃO: Gerar token JWT válido
+            const token = jwt.sign(
+                { 
+                    usu_id: usuario.usu_id,
+                    usu_nome: usuario.usu_nome,
+                    usu_tipo: usuario.usu_tipo
+                },
+                process.env.JWT_SECRET,
+                { expiresIn: '24h' } // Token expira em 24 horas
+            );
+
             return response.status(200).json({
                 sucesso: true,
                 mensagem: 'Login efetuado com sucesso.',
@@ -175,7 +187,7 @@ module.exports = {
                     id: usuario.usu_id,
                     nome: usuario.usu_nome,
                     tipo: usuario.usu_tipo,
-                    token: usuario.usu_id // Simples - usar JWT em produção
+                    token: token // Agora é um JWT válido
                 }
             });
 
