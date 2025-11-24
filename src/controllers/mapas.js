@@ -48,29 +48,47 @@ module.exports = {
         try {
             const { usu_id, mapa_src, mapa_alt, mapa_nome, mapa_descricao } = request.body;
 
+            // Validações
+            if (!usu_id || !mapa_src || !mapa_nome) {
+                return response.status(400).json({
+                    sucesso: false,
+                    mensagem: 'Campos obrigatórios: usu_id, src e nome.'
+                });
+            }
+
+            // Verificar usuário
+            const [usuario] = await db.query(
+                'SELECT usu_id FROM USUARIOS WHERE usu_id = ? AND usu_ativo = 1',
+                [usu_id]
+            );
+
+            if (usuario.length === 0) {
+                return response.status(404).json({
+                    sucesso: false,
+                    mensagem: 'Usuário não encontrado ou inativo.'
+                });
+            }
+
             const sql = `
                 INSERT INTO MAPAS
                     (usu_id, mapa_src, mapa_alt, mapa_nome, mapa_descricao)
-                VALUES
-                    (?, ?, ?, ?, ?);
+                VALUES (?, ?, ?, ?, ?);
             `;
 
             const values = [usu_id, mapa_src, mapa_alt, mapa_nome, mapa_descricao];
             const [result] = await db.query(sql, values);
 
-            const dados = {
-                mapa_id: result.insertId,
-                usu_id,
-                mapa_src,
-                mapa_alt,
-                mapa_nome,
-                mapa_descricao
-            };
-
-            return response.status(200).json({
+            return response.status(201).json({
                 sucesso: true,
                 mensagem: 'Mapa cadastrado com sucesso.',
-                dados: dados
+                dados: {
+                    mapa_id: result.insertId,
+                    usu_id,
+                    mapa_src,
+                    mapa_alt,
+                    mapa_nome,
+                    mapa_descricao
+                }
             });
 
         } catch (error) {
@@ -89,9 +107,12 @@ module.exports = {
 
             const sql = `
                 UPDATE MAPAS SET
-                    usu_id = ?, mapa_src = ?, mapa_alt = ?, mapa_nome = ?, mapa_descricao = ?
-                WHERE
-                    mapa_id = ?;
+                    usu_id = COALESCE(?, usu_id),
+                    mapa_src = COALESCE(?, mapa_src),
+                    mapa_alt = COALESCE(?, mapa_alt),
+                    mapa_nome = COALESCE(?, mapa_nome),
+                    mapa_descricao = COALESCE(?, mapa_descricao)
+                WHERE mapa_id = ?;
             `;
 
             const values = [usu_id, mapa_src, mapa_alt, mapa_nome, mapa_descricao, id];
@@ -100,24 +121,13 @@ module.exports = {
             if (result.affectedRows === 0) {
                 return response.status(404).json({
                     sucesso: false,
-                    mensagem: `Mapa ${id} não encontrado!`,
-                    dados: null
+                    mensagem: `Mapa ${id} não encontrado!`
                 });
             }
 
-            const dados = {
-                mapa_id: id,
-                usu_id,
-                mapa_src,
-                mapa_alt,
-                mapa_nome,
-                mapa_descricao
-            };
-
             return response.status(200).json({
                 sucesso: true,
-                mensagem: `Mapa ${id} atualizado com sucesso!`,
-                dados: dados
+                mensagem: `Mapa ${id} atualizado com sucesso!`
             });
 
         } catch (error) {
@@ -134,21 +144,18 @@ module.exports = {
             const { id } = request.params;
 
             const sql = `DELETE FROM MAPAS WHERE mapa_id = ?`;
-            const values = [id];
-            const [result] = await db.query(sql, values);
+            const [result] = await db.query(sql, [id]);
 
             if (result.affectedRows === 0) {
                 return response.status(404).json({
                     sucesso: false,
-                    mensagem: `Mapa ${id} não encontrado!`,
-                    dados: null
+                    mensagem: `Mapa ${id} não encontrado!`
                 });
             }
 
             return response.status(200).json({
                 sucesso: true,
-                mensagem: `Mapa ${id} excluído com sucesso`,
-                dados: null
+                mensagem: `Mapa ${id} excluído com sucesso`
             });
 
         } catch (error) {

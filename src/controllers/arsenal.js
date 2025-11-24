@@ -1,9 +1,11 @@
 const db = require('../database/connection');
+const { validarTipoArma, validarRaridade } = require('../utils/validacoes');
 
 module.exports = {
     async listarArsenal(request, response) {
         try {
-            const { nome, tipo, raridade } = request.query;
+            const { nome, tipo, raridade, page = 1, limit = 10 } = request.query;
+            const offset = (parseInt(page) - 1) * parseInt(limit);
 
             let where = "WHERE 1=1";
             const values = [];
@@ -25,11 +27,13 @@ module.exports = {
 
             const sql = `
                 SELECT ars_id, usu_id, ars_tipo, ars_nome, ars_src, ars_alt, ars_dano, ars_raridade, 
-                    ars_municao, ars_alcance, ars_taxa_disparo, ars_taxa_acerto, ars_data_criacao
+                       ars_municao, ars_alcance, ars_taxa_disparo, ars_taxa_acerto, ars_data_criacao
                 FROM ARSENAL
                 ${where}
                 ORDER BY ars_nome
+                LIMIT ? OFFSET ?
             `;
+            values.push(parseInt(limit), offset);
 
             const [rows] = await db.query(sql, values);
 
@@ -56,19 +60,17 @@ module.exports = {
 
             const sql = `
                 SELECT ars_id, usu_id, ars_tipo, ars_nome, ars_src, ars_alt, ars_dano, ars_raridade, 
-                    ars_municao, ars_alcance, ars_taxa_disparo, ars_taxa_acerto, ars_data_criacao
+                       ars_municao, ars_alcance, ars_taxa_disparo, ars_taxa_acerto, ars_data_criacao
                 FROM ARSENAL
                 WHERE ars_id = ?;
             `;
 
-            const values = [id];
-            const [rows] = await db.query(sql, values);
+            const [rows] = await db.query(sql, [id]);
 
             if (rows.length === 0) {
                 return response.status(404).json({
                     sucesso: false,
-                    mensagem: `Item de arsenal ${id} não encontrado!`,
-                    dados: null
+                    mensagem: `Item de arsenal ${id} não encontrado!`
                 });
             }
 
@@ -94,12 +96,46 @@ module.exports = {
                 ars_raridade, ars_municao, ars_alcance, ars_taxa_disparo, ars_taxa_acerto 
             } = request.body;
 
+            // Validações
+            if (!usu_id || !ars_tipo || !ars_nome || !ars_src) {
+                return response.status(400).json({
+                    sucesso: false,
+                    mensagem: 'Campos obrigatórios: usu_id, tipo, nome e src.'
+                });
+            }
+
+            if (!validarTipoArma(ars_tipo)) {
+                return response.status(400).json({
+                    sucesso: false,
+                    mensagem: 'Tipo de arma inválido. Use: 0=pistola, 1=faca, 2=rifle.'
+                });
+            }
+
+            if (ars_raridade && !validarRaridade(ars_raridade)) {
+                return response.status(400).json({
+                    sucesso: false,
+                    mensagem: 'Raridade inválida. Use: Comum, Raro, Épico ou Lendário.'
+                });
+            }
+
+            // Verificar usuário
+            const [usuario] = await db.query(
+                'SELECT usu_id FROM USUARIOS WHERE usu_id = ? AND usu_ativo = 1',
+                [usu_id]
+            );
+
+            if (usuario.length === 0) {
+                return response.status(404).json({
+                    sucesso: false,
+                    mensagem: 'Usuário não encontrado ou inativo.'
+                });
+            }
+
             const sql = `
                 INSERT INTO ARSENAL
                     (usu_id, ars_tipo, ars_nome, ars_src, ars_alt, ars_dano, ars_raridade, 
                      ars_municao, ars_alcance, ars_taxa_disparo, ars_taxa_acerto)
-                VALUES
-                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
             `;
 
             const values = [
@@ -109,25 +145,23 @@ module.exports = {
 
             const [result] = await db.query(sql, values);
 
-            const dados = {
-                ars_id: result.insertId,
-                usu_id,
-                ars_tipo,
-                ars_nome,
-                ars_src,
-                ars_alt,
-                ars_dano,
-                ars_raridade,
-                ars_municao,
-                ars_alcance,
-                ars_taxa_disparo,
-                ars_taxa_acerto
-            };
-
-            return response.status(200).json({
+            return response.status(201).json({
                 sucesso: true,
                 mensagem: 'Item do arsenal cadastrado com sucesso.',
-                dados: dados
+                dados: {
+                    ars_id: result.insertId,
+                    usu_id,
+                    ars_tipo,
+                    ars_nome,
+                    ars_src,
+                    ars_alt,
+                    ars_dano,
+                    ars_raridade,
+                    ars_municao,
+                    ars_alcance,
+                    ars_taxa_disparo,
+                    ars_taxa_acerto
+                }
             });
 
         } catch (error) {
@@ -147,13 +181,35 @@ module.exports = {
             } = request.body;
             const { id } = request.params;
 
+            // Validações
+            if (ars_tipo && !validarTipoArma(ars_tipo)) {
+                return response.status(400).json({
+                    sucesso: false,
+                    mensagem: 'Tipo de arma inválido.'
+                });
+            }
+
+            if (ars_raridade && !validarRaridade(ars_raridade)) {
+                return response.status(400).json({
+                    sucesso: false,
+                    mensagem: 'Raridade inválida.'
+                });
+            }
+
             const sql = `
                 UPDATE ARSENAL SET
-                    usu_id = ?, ars_tipo = ?, ars_nome = ?, ars_src = ?, ars_alt = ?, 
-                    ars_dano = ?, ars_raridade = ?, ars_municao = ?, ars_alcance = ?, 
-                    ars_taxa_disparo = ?, ars_taxa_acerto = ?
-                WHERE
-                    ars_id = ?;
+                    usu_id = COALESCE(?, usu_id),
+                    ars_tipo = COALESCE(?, ars_tipo),
+                    ars_nome = COALESCE(?, ars_nome),
+                    ars_src = COALESCE(?, ars_src),
+                    ars_alt = COALESCE(?, ars_alt),
+                    ars_dano = COALESCE(?, ars_dano),
+                    ars_raridade = COALESCE(?, ars_raridade),
+                    ars_municao = COALESCE(?, ars_municao),
+                    ars_alcance = COALESCE(?, ars_alcance),
+                    ars_taxa_disparo = COALESCE(?, ars_taxa_disparo),
+                    ars_taxa_acerto = COALESCE(?, ars_taxa_acerto)
+                WHERE ars_id = ?;
             `;
 
             const values = [
@@ -166,30 +222,13 @@ module.exports = {
             if (result.affectedRows === 0) {
                 return response.status(404).json({
                     sucesso: false,
-                    mensagem: `Item do arsenal ${id} não encontrado!`,
-                    dados: null
+                    mensagem: `Item do arsenal ${id} não encontrado!`
                 });
             }
 
-            const dados = {
-                ars_id: id,
-                usu_id,
-                ars_tipo,
-                ars_nome,
-                ars_src,
-                ars_alt,
-                ars_dano,
-                ars_raridade,
-                ars_municao,
-                ars_alcance,
-                ars_taxa_disparo,
-                ars_taxa_acerto
-            };
-
             return response.status(200).json({
                 sucesso: true,
-                mensagem: `Item do arsenal ${id} atualizado com sucesso!`,
-                dados: dados
+                mensagem: `Item do arsenal ${id} atualizado com sucesso!`
             });
 
         } catch (error) {
@@ -206,21 +245,18 @@ module.exports = {
             const { id } = request.params;
 
             const sql = `DELETE FROM ARSENAL WHERE ars_id = ?`;
-            const values = [id];
-            const [result] = await db.query(sql, values);
+            const [result] = await db.query(sql, [id]);
 
             if (result.affectedRows === 0) {
                 return response.status(404).json({
                     sucesso: false,
-                    mensagem: `Item do arsenal ${id} não encontrado!`,
-                    dados: null
+                    mensagem: `Item do arsenal ${id} não encontrado!`
                 });
             }
 
             return response.status(200).json({
                 sucesso: true,
-                mensagem: `Item do arsenal ${id} excluído com sucesso`,
-                dados: null
+                mensagem: `Item do arsenal ${id} excluído com sucesso`
             });
 
         } catch (error) {

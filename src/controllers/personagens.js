@@ -1,9 +1,11 @@
 const db = require('../database/connection');
+const { validarTipoPersonagem } = require('../utils/validacoes');
 
 module.exports = {
     async listarPersonagens(request, response) {
         try {
-            const { nome, tipo } = request.query;
+            const { nome, tipo, page = 1, limit = 10 } = request.query;
+            const offset = (parseInt(page) - 1) * parseInt(limit);
 
             let where = "WHERE 1=1";
             const values = [];
@@ -20,11 +22,14 @@ module.exports = {
             const [[{ total }]] = await db.query(`SELECT COUNT(*) as total FROM PERSONAGENS ${where}`, values);
 
             const sql = `
-                SELECT pers_id, usu_id, pers_tipo, pers_nome, pers_src, pers_alt, pers_descricao, pers_frase, pers_data_criacao
+                SELECT pers_id, usu_id, pers_tipo, pers_nome, pers_src, pers_alt, 
+                       pers_descricao, pers_frase, pers_data_criacao
                 FROM PERSONAGENS
                 ${where}
                 ORDER BY pers_nome
+                LIMIT ? OFFSET ?
             `;
+            values.push(parseInt(limit), offset);
 
             const [rows] = await db.query(sql, values);
 
@@ -50,19 +55,18 @@ module.exports = {
             const { id } = request.params;
 
             const sql = `
-                SELECT pers_id, usu_id, pers_tipo, pers_nome, pers_src, pers_alt, pers_descricao, pers_frase, pers_data_criacao
+                SELECT pers_id, usu_id, pers_tipo, pers_nome, pers_src, pers_alt, 
+                       pers_descricao, pers_frase, pers_data_criacao
                 FROM PERSONAGENS
                 WHERE pers_id = ?;
             `;
 
-            const values = [id];
-            const [rows] = await db.query(sql, values);
+            const [rows] = await db.query(sql, [id]);
 
             if (rows.length === 0) {
                 return response.status(404).json({
                     sucesso: false,
-                    mensagem: `Personagem ${id} não encontrado!`,
-                    dados: null
+                    mensagem: `Personagem ${id} não encontrado!`
                 });
             }
 
@@ -85,31 +89,56 @@ module.exports = {
         try {
             const { usu_id, pers_tipo, pers_nome, pers_src, pers_alt, pers_descricao, pers_frase } = request.body;
 
+            // Validações
+            if (!usu_id || !pers_tipo || !pers_nome || !pers_src) {
+                return response.status(400).json({
+                    sucesso: false,
+                    mensagem: 'Campos obrigatórios: usu_id, tipo, nome e src.'
+                });
+            }
+
+            if (!validarTipoPersonagem(pers_tipo)) {
+                return response.status(400).json({
+                    sucesso: false,
+                    mensagem: 'Tipo de personagem inválido. Use: 0=guardião, 1=cavaleiro, 2=anjo, 3=inimigo.'
+                });
+            }
+
+            // Verificar se usuário existe
+            const [usuario] = await db.query(
+                'SELECT usu_id FROM USUARIOS WHERE usu_id = ? AND usu_ativo = 1',
+                [usu_id]
+            );
+
+            if (usuario.length === 0) {
+                return response.status(404).json({
+                    sucesso: false,
+                    mensagem: 'Usuário não encontrado ou inativo.'
+                });
+            }
+
             const sql = `
                 INSERT INTO PERSONAGENS
                     (usu_id, pers_tipo, pers_nome, pers_src, pers_alt, pers_descricao, pers_frase)
-                VALUES
-                    (?, ?, ?, ?, ?, ?, ?);
+                VALUES (?, ?, ?, ?, ?, ?, ?);
             `;
 
             const values = [usu_id, pers_tipo, pers_nome, pers_src, pers_alt, pers_descricao, pers_frase];
             const [result] = await db.query(sql, values);
 
-            const dados = {
-                pers_id: result.insertId,
-                usu_id,
-                pers_tipo,
-                pers_nome,
-                pers_src,
-                pers_alt,
-                pers_descricao,
-                pers_frase
-            };
-
-            return response.status(200).json({
+            return response.status(201).json({
                 sucesso: true,
                 mensagem: 'Personagem cadastrado com sucesso.',
-                dados: dados
+                dados: {
+                    pers_id: result.insertId,
+                    usu_id,
+                    pers_tipo,
+                    pers_nome,
+                    pers_src,
+                    pers_alt,
+                    pers_descricao,
+                    pers_frase
+                }
             });
 
         } catch (error) {
@@ -126,11 +155,24 @@ module.exports = {
             const { usu_id, pers_tipo, pers_nome, pers_src, pers_alt, pers_descricao, pers_frase } = request.body;
             const { id } = request.params;
 
+            // Validações
+            if (pers_tipo && !validarTipoPersonagem(pers_tipo)) {
+                return response.status(400).json({
+                    sucesso: false,
+                    mensagem: 'Tipo de personagem inválido.'
+                });
+            }
+
             const sql = `
                 UPDATE PERSONAGENS SET
-                    usu_id = ?, pers_tipo = ?, pers_nome = ?, pers_src = ?, pers_alt = ?, pers_descricao = ?, pers_frase = ?
-                WHERE
-                    pers_id = ?;
+                    usu_id = COALESCE(?, usu_id),
+                    pers_tipo = COALESCE(?, pers_tipo),
+                    pers_nome = COALESCE(?, pers_nome),
+                    pers_src = COALESCE(?, pers_src),
+                    pers_alt = COALESCE(?, pers_alt),
+                    pers_descricao = COALESCE(?, pers_descricao),
+                    pers_frase = COALESCE(?, pers_frase)
+                WHERE pers_id = ?;
             `;
 
             const values = [usu_id, pers_tipo, pers_nome, pers_src, pers_alt, pers_descricao, pers_frase, id];
@@ -139,26 +181,13 @@ module.exports = {
             if (result.affectedRows === 0) {
                 return response.status(404).json({
                     sucesso: false,
-                    mensagem: `Personagem ${id} não encontrado!`,
-                    dados: null
+                    mensagem: `Personagem ${id} não encontrado!`
                 });
             }
 
-            const dados = {
-                pers_id: id,
-                usu_id,
-                pers_tipo,
-                pers_nome,
-                pers_src,
-                pers_alt,
-                pers_descricao,
-                pers_frase
-            };
-
             return response.status(200).json({
                 sucesso: true,
-                mensagem: `Personagem ${id} atualizado com sucesso!`,
-                dados: dados
+                mensagem: `Personagem ${id} atualizado com sucesso!`
             });
 
         } catch (error) {
@@ -175,21 +204,18 @@ module.exports = {
             const { id } = request.params;
 
             const sql = `DELETE FROM PERSONAGENS WHERE pers_id = ?`;
-            const values = [id];
-            const [result] = await db.query(sql, values);
+            const [result] = await db.query(sql, [id]);
 
             if (result.affectedRows === 0) {
                 return response.status(404).json({
                     sucesso: false,
-                    mensagem: `Personagem ${id} não encontrado!`,
-                    dados: null
+                    mensagem: `Personagem ${id} não encontrado!`
                 });
             }
 
             return response.status(200).json({
                 sucesso: true,
-                mensagem: `Personagem ${id} excluído com sucesso`,
-                dados: null
+                mensagem: `Personagem ${id} excluído com sucesso`
             });
 
         } catch (error) {

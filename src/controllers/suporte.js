@@ -1,4 +1,5 @@
-const db = require('../database/connection'); 
+const db = require('../database/connection');
+const { validarEmail, validarStatusSuporte } = require('../utils/validacoes');
 
 module.exports = {
     async listarSuporte(request, response) {
@@ -32,6 +33,7 @@ module.exports = {
                 SELECT sup_id, usu_id, asst_id, sup_mensagem, sup_status, sup_data_criacao, sup_email, sup_nome
                 FROM SUPORTE
                 ${where}
+                ORDER BY sup_data_criacao DESC
                 LIMIT ? OFFSET ?
             `;
             values.push(parseInt(limit), offset);
@@ -53,131 +55,171 @@ module.exports = {
                 dados: error.message
             });
         }
-    }, 
+    },
+
     async cadastrarSuporte(request, response) {
         try {
-            const { usu_id, asst_id, sup_mensagem, sup_status, sup_data_criacao, sup_email, sup_nome } = request.body;
-            const usu_ativo = 1;
+            const { usu_id, asst_id, sup_mensagem, sup_status, sup_email, sup_nome } = request.body;
+
+            // Validações
+            if (!asst_id || !sup_mensagem || !sup_email || !sup_nome) {
+                return response.status(400).json({
+                    sucesso: false,
+                    mensagem: 'Campos obrigatórios: assunto_id, mensagem, email e nome.'
+                });
+            }
+
+            if (!validarEmail(sup_email)) {
+                return response.status(400).json({
+                    sucesso: false,
+                    mensagem: 'Email de contato inválido.'
+                });
+            }
+
+            if (sup_status && !validarStatusSuporte(sup_status)) {
+                return response.status(400).json({
+                    sucesso: false,
+                    mensagem: 'Status inválido. Use: Aberto, Em andamento, Resolvido ou Fechado.'
+                });
+            }
+
+            // Verificar se assunto existe
+            const [assunto] = await db.query(
+                'SELECT asst_id FROM ASSUNTOS WHERE asst_id = ?',
+                [asst_id]
+            );
+
+            if (assunto.length === 0) {
+                return response.status(404).json({
+                    sucesso: false,
+                    mensagem: 'Assunto não encontrado.'
+                });
+            }
+
+            // Se usu_id foi fornecido, verificar se existe
+            if (usu_id) {
+                const [usuario] = await db.query(
+                    'SELECT usu_id FROM USUARIOS WHERE usu_id = ? AND usu_ativo = 1',
+                    [usu_id]
+                );
+
+                if (usuario.length === 0) {
+                    return response.status(404).json({
+                        sucesso: false,
+                        mensagem: 'Usuário não encontrado ou inativo.'
+                    });
+                }
+            }
 
             const sql = `
-                INSERT INTO suporte
-                    (usu_id, asst_id, sup_mensagem, sup_status, sup_data_criacao, sup_email, sup_nome)
-                VALUES
-                    (?, ?, ?, ?, ?, ?, ?);
+                INSERT INTO SUPORTE
+                    (usu_id, asst_id, sup_mensagem, sup_status, sup_email, sup_nome)
+                VALUES (?, ?, ?, ?, ?, ?);
             `;
 
-            const values = [usu_id, asst_id, sup_mensagem, sup_status, sup_data_criacao, sup_email, sup_nome];
-
+            const statusPadrao = sup_status || 'Aberto';
+            const values = [usu_id, asst_id, sup_mensagem, statusPadrao, sup_email, sup_nome];
             const [result] = await db.query(sql, values);
 
-            const dados = {
-                id: result.insertId,
-                usu_id,
-                asst_id, 
-                sup_mensagem, 
-                sup_status,
-                sup_data_criacao, 
-                sup_email,
-                sup_nome
-            };
-            
-            return response.status(200).json({
+            return response.status(201).json({
                 sucesso: true, 
-                mensagem: 'Cadastro de Suporte', 
-                dados: dados
+                mensagem: 'Ticket de suporte criado com sucesso.', 
+                dados: {
+                    sup_id: result.insertId,
+                    usu_id,
+                    asst_id, 
+                    sup_mensagem, 
+                    sup_status: statusPadrao,
+                    sup_email,
+                    sup_nome
+                }
             });
         } catch (error) {
             return response.status(500).json({
                 sucesso: false, 
-                mensagem: 'Erro na requisição.', 
+                mensagem: 'Erro ao criar ticket de suporte.', 
                 dados: error.message
             });
         }
-    }, 
+    },
+
     async editarSuporte(request, response) {
         try {
-            const { usu_id, asst_id, sup_mensagem, sup_status, sup_data_criacao, sup_email, sup_nome } = request.body;
+            const { asst_id, sup_mensagem, sup_status, sup_email, sup_nome } = request.body;
             const { id } = request.params;
             
-            const sql = `   
-                UPDATE suporte
-                SET
-                    usu_id = ?,
-                    asst_id = ?,
-                    sup_mensagem = ?,
-                    sup_status = ?,
-                    sup_data_criacao = ?,
-                    sup_email = ?,
-                    sup_nome = ?
-                WHERE
-                    sup_id = ?;
-            `;
-            
-            const values = [usu_id, asst_id, sup_mensagem, sup_status, sup_data_criacao, sup_email, sup_nome, id];
-            const [result] = await db.query(sql, values);
-            
-            // Verifica se o usuário foi encontrado
-            if (result.affectedRows == 0) {
-                return response.status(404).json({
+            // Validações
+            if (sup_status && !validarStatusSuporte(sup_status)) {
+                return response.status(400).json({
                     sucesso: false,
-                    mensagem: `Usuário ${id} não encontrado!`,
-                    dados: null
+                    mensagem: 'Status inválido.'
                 });
             }
 
-            const dados = {
-                id: result.insertId,
-                usu_id,
-                asst_id, 
-                sup_mensagem, 
-                sup_status,
-                sup_data_criacao, 
-                sup_email,
-                sup_nome
-            };
+            if (sup_email && !validarEmail(sup_email)) {
+                return response.status(400).json({
+                    sucesso: false,
+                    mensagem: 'Email inválido.'
+                });
+            }
+
+            const sql = `   
+                UPDATE SUPORTE SET
+                    asst_id = COALESCE(?, asst_id),
+                    sup_mensagem = COALESCE(?, sup_mensagem),
+                    sup_status = COALESCE(?, sup_status),
+                    sup_email = COALESCE(?, sup_email),
+                    sup_nome = COALESCE(?, sup_nome)
+                WHERE sup_id = ?;
+            `;
+            
+            const values = [asst_id, sup_mensagem, sup_status, sup_email, sup_nome, id];
+            const [result] = await db.query(sql, values);
+            
+            if (result.affectedRows === 0) {
+                return response.status(404).json({
+                    sucesso: false,
+                    mensagem: `Ticket de suporte ${id} não encontrado!`
+                });
+            }
 
             return response.status(200).json({
                 sucesso: true, 
-                mensagem: 'Alteração no Suporte', 
-                dados: dados
+                mensagem: `Ticket de suporte ${id} atualizado com sucesso!`
             });
         } catch (error) {
             return response.status(500).json({
                 sucesso: false, 
-                mensagem: 'Erro na requisição.', 
+                mensagem: 'Erro ao atualizar ticket de suporte.', 
                 dados: error.message
             });
         }
-    }, 
+    },
+
     async apagarSuporte(request, response) {
         try {
-            const { usu_id } = request.params;
-            const sql = `
-                DELETE FROM suporte
-                WHERE usu_id = ?;
-            `;
-            const values = [usu_id];
-            const [result] = await db.query(sql, values);
+            const { id } = request.params;
             
-            if (result.affectedRows == 0) {
+            const sql = `DELETE FROM SUPORTE WHERE sup_id = ?`;
+            const [result] = await db.query(sql, [id]);
+            
+            if (result.affectedRows === 0) {
                 return response.status(404).json({
                     sucesso: false,
-                    mensagem: `Usuário ${usu_id} não encontrado!`,
-                    dados: null
+                    mensagem: `Ticket de suporte ${id} não encontrado!`
                 });
             }
 
             return response.status(200).json({
                 sucesso: true, 
-                mensagem: 'Exclusão de Suporte', 
-                dados: null
+                mensagem: `Ticket de suporte ${id} excluído com sucesso!`
             });
         } catch (error) {
             return response.status(500).json({
                 sucesso: false, 
-                mensagem: 'Erro na requisição.', 
+                mensagem: 'Erro ao excluir ticket de suporte.', 
                 dados: error.message
             });
         }
-    }, 
+    }
 };

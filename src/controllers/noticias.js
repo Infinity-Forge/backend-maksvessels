@@ -1,4 +1,4 @@
-const db = require('../database/connection'); 
+const db = require('../database/connection');
 
 module.exports = {
     async listarNoticias(request, response) {
@@ -50,136 +50,124 @@ module.exports = {
                 dados: error.message
             });
         }
-    }, 
+    },
+
     async cadastrarNoticias(request, response) {
         try {
-
             const { usu_id, not_titulo, not_conteudo, not_imagem } = request.body;
 
-            //instruçao SQL
+            // Validações
+            if (!usu_id || !not_titulo || !not_conteudo) {
+                return response.status(400).json({
+                    sucesso: false,
+                    mensagem: 'Campos obrigatórios: usu_id, título e conteúdo.'
+                });
+            }
+
+            // Verificar usuário
+            const [usuario] = await db.query(
+                'SELECT usu_id FROM USUARIOS WHERE usu_id = ? AND usu_ativo = 1',
+                [usu_id]
+            );
+
+            if (usuario.length === 0) {
+                return response.status(404).json({
+                    sucesso: false,
+                    mensagem: 'Usuário não encontrado ou inativo.'
+                });
+            }
+
             const sql = `
                 INSERT INTO NOTICIAS
                  (usu_id, not_titulo, not_conteudo, not_imagem) 
-                 VALUES
-
-              (?, ?, ?, ?)
+                VALUES (?, ?, ?, ?);
             `;
             
-            //definição dos dados a serem inseridos em um array
-            const values = [ usu_id, not_titulo, not_conteudo, not_imagem ];
-
-            //execução da instrução sql passando os parâmetros
+            const values = [usu_id, not_titulo, not_conteudo, not_imagem];
             const [result] = await db.query(sql, values);
 
-            //identificação do ID de registro inserido
-            const dados = {
-
-                id: result.insertId,
-                usu_id, 
-                not_titulo, 
-                not_conteudo,
-                not_imagem
-
-            };
-
-            return response.status(200).json({
+            return response.status(201).json({
                 sucesso: true,
-                mensagem: 'Cadastro de usuários',
-                dados: dados
+                mensagem: 'Notícia cadastrada com sucesso.',
+                dados: {
+                    not_id: result.insertId,
+                    usu_id, 
+                    not_titulo, 
+                    not_conteudo,
+                    not_imagem
+                }
             });
         } catch (error) {
             return response.status(500).json({
                 sucesso: false, 
-                mensagem: 'Erro na requisição.', 
+                mensagem: 'Erro ao cadastrar notícia.', 
                 dados: error.message
             });
         }
-    }, 
+    },
 
     async editarNoticias(request, response) {
         try {
-
-            //parametros recebidos pelo corpo da requisição
             const { usu_id, not_titulo, not_conteudo, not_imagem } = request.body;
-
-            //parametros recebido pela URL via params ex: /usuario/1
             const { id } = request.params;
 
             const sql = `
                 UPDATE NOTICIAS SET
-                    usu_id =?, not_titulo =?, not_conteudo =?, not_imagem =?
-                WHERE
-                    not_id =?;
+                    usu_id = COALESCE(?, usu_id),
+                    not_titulo = COALESCE(?, not_titulo),
+                    not_conteudo = COALESCE(?, not_conteudo),
+                    not_imagem = COALESCE(?, not_imagem)
+                WHERE not_id = ?;
             `;
 
-            //preparo do array com dados que serao atualizados
             const values = [usu_id, not_titulo, not_conteudo, not_imagem, id];
-
-            //execuçao e obtençao de confirmaçao da atualizaçao realizada
             const [result] = await db.query(sql, values);
 
             if (result.affectedRows === 0){
-
                 return response.status(404).json({
                     sucesso: false,
-                    mensagem: `Usuario ${id} não encontrado`,
-                    dados: null
+                    mensagem: `Notícia ${id} não encontrada.`
                 });
             }
             
-            const dados = {
-                usu_id, 
-                not_titulo, 
-                not_conteudo, 
-                not_imagem
-            };
-
             return response.status(200).json({
                 sucesso: true, 
-                mensagem: 'Alteração no cadastro de noticia', 
-                dados
+                mensagem: `Notícia ${id} atualizada com sucesso!`
             });
 
         } catch (error) {
             return response.status(500).json({
                 sucesso: false, 
-                mensagem: 'Erro na requisição.', 
+                mensagem: 'Erro ao editar notícia.', 
                 dados: error.message
             });
         }
-    }, 
-
+    },
 
     async apagarNoticias(request, response) {
         try {
             const { id } = request.params;
 
             const sql = `DELETE FROM NOTICIAS WHERE not_id = ?`;
-
-            const values = [id];
-
-            const [result] = await db.query(sql, values);
+            const [result] = await db.query(sql, [id]);
 
             if(result.affectedRows === 0) {
                 return response.status(404).json({
                     sucesso: false,
-                    mensagem: `Notícia ${not_id} não encontrada!`,
-                    dados: null
-                })
-            };
+                    mensagem: `Notícia ${id} não encontrada!`
+                });
+            }
 
             return response.status(200).json({
                 sucesso: true, 
-                mensagem: `Notícia ${id} excluída com sucesso`, 
-                dados: null
+                mensagem: `Notícia ${id} excluída com sucesso`
             });
         } catch (error) {
             return response.status(500).json({
                 sucesso: false, 
-                mensagem: 'Erro na requisição.', 
+                mensagem: 'Erro ao excluir notícia.', 
                 dados: error.message
             });
         }
-    }, 
-};  
-
+    }
+};

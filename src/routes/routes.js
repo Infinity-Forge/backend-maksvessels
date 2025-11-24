@@ -12,58 +12,73 @@ const PersonagensController = require('../controllers/personagens');
 const ArsenalController = require('../controllers/arsenal');
 const MapasController = require('../controllers/mapas');
 
-router.get('/usuarios', UsuariosController.listarUsuarios); 
-router.post('/usuarios', UsuariosController.cadastrarUsuarios); 
-router.patch('/usuarios/:id', UsuariosController.editarUsuarios); 
-router.delete('/usuarios/:id', UsuariosController.apagarUsuarios); 
-router.delete('/usuarios/del/:id', UsuariosController.ocultarUsuario);
+const { autenticar, autorizar } = require('../middleware/auth');
+
+// Rotas públicas
 router.get('/login', UsuariosController.login); 
+router.post('/usuarios', UsuariosController.cadastrarUsuarios);
 
+// Rotas protegidas
+router.get('/usuarios', autenticar, UsuariosController.listarUsuarios); 
+router.patch('/usuarios/:id', autenticar, UsuariosController.editarUsuarios); 
+router.delete('/usuarios/:id', autenticar, autorizar('admin'), UsuariosController.apagarUsuarios); 
+router.delete('/usuarios/del/:id', autenticar, autorizar('admin'), UsuariosController.ocultarUsuario);
+
+// Categorias (apenas admin)
 router.get('/categoria', CategoriaController.listarCategoria); 
-router.post('/categoria', CategoriaController.cadastrarCategoria); 
-router.patch('/categoria/:id', CategoriaController.editarCategoria); 
-router.delete('/categoria/:id', CategoriaController.apagarCategoria);
+router.post('/categoria', autenticar, autorizar('admin'), CategoriaController.cadastrarCategoria); 
+router.patch('/categoria/:id', autenticar, autorizar('admin'), CategoriaController.editarCategoria); 
+router.delete('/categoria/:id', autenticar, autorizar('admin'), CategoriaController.apagarCategoria);
 
-router.get('/Assuntos', AssuntosController.listarAssuntos); 
-router.post('/Assuntos', AssuntosController.cadastrarAssuntos); 
-router.patch('/Assuntos/:id', AssuntosController.editarAssuntos); 
-router.delete('/Assuntos/:id', AssuntosController.apagarAssuntos);
+// Assuntos (apenas admin)
+router.get('/Assuntos', AssuntosController.listarAssunto); 
+router.post('/Assuntos', autenticar, autorizar('admin'), AssuntosController.cadastrarAssunto); 
+router.patch('/Assuntos/:id', autenticar, autorizar('admin'), AssuntosController.editarAssunto); 
+router.delete('/Assuntos/:id', autenticar, autorizar('admin'), AssuntosController.apagarAssunto);
 
+// FAQ (admin e moderador podem editar)
 router.get('/faq', FAQController.listarFAQ); 
-router.post('/faq', FAQController.adicionarFAQ); 
-router.patch('/faq/:id', FAQController.editarFAQ); 
-router.delete('/faq/:id', FAQController.removerFAQ);
+router.post('/faq', autenticar, autorizar('admin', 'moderador'), FAQController.adicionarFAQ); 
+router.patch('/faq/:id', autenticar, autorizar('admin', 'moderador'), FAQController.editarFAQ); 
+router.delete('/faq/:id', autenticar, autorizar('admin', 'moderador'), FAQController.removerFAQ);
 
+// Notícias (autenticados)
 router.get('/noticias', NoticiasController.listarNoticias); 
-router.post('/noticias', NoticiasController.cadastrarNoticias); 
-router.patch('/noticias/:id', NoticiasController.editarNoticias); 
-router.delete('/noticias/:id', NoticiasController.apagarNoticias);
+router.post('/noticias', autenticar, NoticiasController.cadastrarNoticias); 
+router.patch('/noticias/:id', autenticar, NoticiasController.editarNoticias); 
+router.delete('/noticias/:id', autenticar, NoticiasController.apagarNoticias);
 
+// Personagens (autenticados)
 router.get('/personagens', PersonagensController.listarPersonagens);
 router.get('/personagens/:id', PersonagensController.listarPersonagemPorId);
-router.post('/personagens', PersonagensController.cadastrarPersonagem);
-router.put('/personagens/:id', PersonagensController.editarPersonagem);
-router.delete('/personagens/:id', PersonagensController.apagarPersonagem);
+router.post('/personagens', autenticar, PersonagensController.cadastrarPersonagem);
+router.put('/personagens/:id', autenticar, PersonagensController.editarPersonagem);
+router.delete('/personagens/:id', autenticar, PersonagensController.apagarPersonagem);
 
+// Arsenal (autenticados)
 router.get('/arsenal', ArsenalController.listarArsenal);
 router.get('/arsenal/:id', ArsenalController.listarArmaPorId);
-router.post('/arsenal', ArsenalController.cadastrarArsenal);
-router.put('/arsenal/:id', ArsenalController.editarArsenal);
-router.delete('/arsenal/:id', ArsenalController.apagarArsenal);
+router.post('/arsenal', autenticar, ArsenalController.cadastrarArsenal);
+router.put('/arsenal/:id', autenticar, ArsenalController.editarArsenal);
+router.delete('/arsenal/:id', autenticar, ArsenalController.apagarArsenal);
 
+// Mapas (autenticados)
 router.get('/mapas', MapasController.listarMapas);
-router.post('/mapas', MapasController.cadastrarMapa);
-router.put('/mapas/:id', MapasController.editarMapa);
-router.delete('/mapas/:id', MapasController.apagarMapa);
+router.post('/mapas', autenticar, MapasController.cadastrarMapa);
+router.put('/mapas/:id', autenticar, MapasController.editarMapa);
+router.delete('/mapas/:id', autenticar, MapasController.apagarMapa);
 
-router.get('/suporte', SuporteController.listarSuporte); 
+// Suporte (público para criar, autenticado para listar/editar)
+router.get('/suporte', autenticar, SuporteController.listarSuporte); 
 router.post('/suporte', SuporteController.cadastrarSuporte); 
-router.patch('/suporte/:id', SuporteController.editarSuporte); 
-router.delete('/suporte/:id', SuporteController.apagarSuporte);
+router.patch('/suporte/:id', autenticar, SuporteController.editarSuporte); 
+router.delete('/suporte/:id', autenticar, autorizar('admin', 'moderador'), SuporteController.apagarSuporte);
 
+// Compartilhamento (público)
 router.get('/compartilhamento', CompartilhamentoController.listarCompartilhamento); 
 router.post('/compartilhamento', CompartilhamentoController.cadastrarCompartilhamento); 
 router.patch('/compartilhamento/:id', CompartilhamentoController.editarCompartilhamento); 
 router.delete('/compartilhamento/:id', CompartilhamentoController.apagarCompartilhamento);
 
 module.exports = router;
+
