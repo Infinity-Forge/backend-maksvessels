@@ -15,7 +15,7 @@ const MapasController = require('../controllers/mapas');
 const { autenticar, autorizar } = require('../middleware/auth');
 
 // Rotas públicas
-router.get('/login', UsuariosController.login); 
+router.post('/login', UsuariosController.login); 
 router.post('/usuarios', UsuariosController.cadastrarUsuarios);
 
 // Rotas protegidas

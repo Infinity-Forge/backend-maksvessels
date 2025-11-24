@@ -4,8 +4,7 @@ const { validarTipoArma, validarRaridade } = require('../utils/validacoes');
 module.exports = {
     async listarArsenal(request, response) {
         try {
-            const { nome, tipo, raridade, page = 1, limit = 10 } = request.query;
-            const offset = (parseInt(page) - 1) * parseInt(limit);
+            const { nome, tipo, raridade } = request.query;
 
             let where = "WHERE 1=1";
             const values = [];
@@ -23,17 +22,13 @@ module.exports = {
                 values.push(raridade);
             }
 
-            const [[{ total }]] = await db.query(`SELECT COUNT(*) as total FROM ARSENAL ${where}`, values);
-
             const sql = `
                 SELECT ars_id, usu_id, ars_tipo, ars_nome, ars_src, ars_alt, ars_dano, ars_raridade, 
-                       ars_municao, ars_alcance, ars_taxa_disparo, ars_taxa_acerto, ars_data_criacao
+                    ars_municao, ars_alcance, ars_taxa_disparo, ars_taxa_acerto, ars_data_criacao
                 FROM ARSENAL
                 ${where}
-                ORDER BY ars_nome
-                LIMIT ? OFFSET ?
+                ORDER BY ars_nome;
             `;
-            values.push(parseInt(limit), offset);
 
             const [rows] = await db.query(sql, values);
 
@@ -41,7 +36,6 @@ module.exports = {
                 sucesso: true,
                 mensagem: rows.length > 0 ? 'Itens do arsenal encontrados.' : 'Nenhum item encontrado.',
                 nItens: rows.length,
-                total,
                 dados: rows
             });
 

@@ -1,20 +1,28 @@
 const db = require('../database/connection');
+const jwt = require("jsonwebtoken");
 
 const autenticar = async (request, response, next) => {
     try {
         const token = request.headers.authorization;
-        
-        if (!token) {
+
+        if (token.startsWith("Bearer ")) {
+            token = token.replace("Bearer ", "");
+        }
+
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
             return response.status(401).json({
                 sucesso: false,
-                mensagem: 'Token de autenticação necessário.'
+                mensagem: "Token de autenticação necessário."
             });
         }
 
-        // Verificar se usuário existe e está ativo
+        // Decodifica o token JWT
+        const payload = jwt.verify(token, process.env.JWT_SECRET);
+
+        // payload deve conter o usu_id
         const [usuario] = await db.query(
             'SELECT usu_id, usu_nome, usu_tipo FROM USUARIOS WHERE usu_id = ? AND usu_ativo = 1',
-            [token]
+            [payload.usu_id]
         );
 
         if (usuario.length === 0) {
@@ -26,10 +34,12 @@ const autenticar = async (request, response, next) => {
 
         request.usuario = usuario[0];
         next();
+
     } catch (error) {
         return response.status(500).json({
             sucesso: false,
-            mensagem: 'Erro na autenticação.'
+            mensagem: 'Erro na autenticação.',
+            erro: error.message
         });
     }
 };

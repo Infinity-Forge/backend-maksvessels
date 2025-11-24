@@ -4,8 +4,7 @@ const { validarTipoPersonagem } = require('../utils/validacoes');
 module.exports = {
     async listarPersonagens(request, response) {
         try {
-            const { nome, tipo, page = 1, limit = 10 } = request.query;
-            const offset = (parseInt(page) - 1) * parseInt(limit);
+            const { nome, tipo } = request.query;
 
             let where = "WHERE 1=1";
             const values = [];
@@ -14,22 +13,19 @@ module.exports = {
                 where += " AND pers_nome LIKE ?";
                 values.push(`%${nome}%`);
             }
+
             if (tipo !== undefined) {
                 where += " AND pers_tipo = ?";
                 values.push(tipo);
             }
-
-            const [[{ total }]] = await db.query(`SELECT COUNT(*) as total FROM PERSONAGENS ${where}`, values);
 
             const sql = `
                 SELECT pers_id, usu_id, pers_tipo, pers_nome, pers_src, pers_alt, 
                        pers_descricao, pers_frase, pers_data_criacao
                 FROM PERSONAGENS
                 ${where}
-                ORDER BY pers_nome
-                LIMIT ? OFFSET ?
+                ORDER BY pers_nome;
             `;
-            values.push(parseInt(limit), offset);
 
             const [rows] = await db.query(sql, values);
 
@@ -37,7 +33,6 @@ module.exports = {
                 sucesso: true,
                 mensagem: rows.length > 0 ? 'Personagens encontrados.' : 'Nenhum personagem encontrado.',
                 nItens: rows.length,
-                total,
                 dados: rows
             });
 

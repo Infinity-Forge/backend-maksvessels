@@ -134,7 +134,7 @@ module.exports = {
 
     async login(request, response) {
         try {
-            const { email, senha } = request.query;
+            const { email, senha } = request.body;
 
             if (!email || !senha) {
                 return response.status(400).json({
