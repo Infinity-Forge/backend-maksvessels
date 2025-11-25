@@ -10,8 +10,9 @@ const porta = process.env.PORT || 3333;
 // Middlewares
 app.use(cors()); 
 app.use(express.json()); 
+app.use('/public', express.static('public'));
 
-// Rota padrão (ANTES das outras rotas)
+// Rota padrão
 app.get('/', (request, response) => {
     response.json({
         sucesso: true,
@@ -33,10 +34,10 @@ app.get('/', (request, response) => {
     });
 });
 
-// Demais rotas
+// ⬇️⬇️⬇️ ESTA LINHA DEVE ESTAR ATIVA ⬇️⬇️⬇️
 app.use(router);
 
-// Rota para 404 (DEPOIS de todas as rotas)
+// Rota para 404
 app.use('*', (req, res) => {
     res.status(404).json({
         sucesso: false,
@@ -47,4 +48,3 @@ app.use('*', (req, res) => {
 app.listen(porta, () => {
     console.log(`🚀 Servidor iniciado em http://localhost:${porta}`);
 });
-

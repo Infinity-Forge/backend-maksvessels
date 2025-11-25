@@ -1,5 +1,6 @@
 const db = require('../database/connection');
 const { validarTipoPersonagem } = require('../utils/validacoes');
+const { gerarUrl } = require('../utils/gerarUrl'); // ⬅️ ADICIONE ESTA LINHA
 
 module.exports = {
     async listarPersonagens(request, response) {
@@ -29,11 +30,17 @@ module.exports = {
 
             const [rows] = await db.query(sql, values);
 
+            // ⬇️ MODIFIQUE ESTA PARTE ⬇️
+            const dados = rows.map(personagem => ({
+                ...personagem,
+                pers_src: gerarUrl(personagem.pers_src, 'personagens', 'sem.jpg')
+            }));
+
             return response.status(200).json({
                 sucesso: true,
                 mensagem: rows.length > 0 ? 'Personagens encontrados.' : 'Nenhum personagem encontrado.',
-                nItens: rows.length,
-                dados: rows
+                nItens: dados.length,
+                dados: dados
             });
 
         } catch (error) {
@@ -46,49 +53,56 @@ module.exports = {
     },
 
     async listarPersonagemPorId(request, response) {
-        try {
-            const { id } = request.params;
+    try {
+        const { id } = request.params;
 
-            const sql = `
-                SELECT pers_id, usu_id, pers_tipo, pers_nome, pers_src, pers_alt, 
-                       pers_descricao, pers_frase, pers_data_criacao
-                FROM PERSONAGENS
-                WHERE pers_id = ?;
-            `;
+        const sql = `
+            SELECT pers_id, usu_id, pers_tipo, pers_nome, pers_src, pers_alt, 
+                   pers_descricao, pers_frase, pers_data_criacao
+            FROM PERSONAGENS
+            WHERE pers_id = ?;
+        `;
 
-            const [rows] = await db.query(sql, [id]);
+        const [rows] = await db.query(sql, [id]);
 
-            if (rows.length === 0) {
-                return response.status(404).json({
-                    sucesso: false,
-                    mensagem: `Personagem ${id} não encontrado!`
-                });
-            }
-
-            return response.status(200).json({
-                sucesso: true,
-                mensagem: `Personagem ${id} encontrado com sucesso!`,
-                dados: rows[0]
-            });
-
-        } catch (error) {
-            return response.status(500).json({
+        if (rows.length === 0) {
+            return response.status(404).json({
                 sucesso: false,
-                mensagem: 'Erro ao buscar personagem.',
-                dados: error.message
+                mensagem: `Personagem ${id} não encontrado!`
             });
         }
-    },
+
+        // ⬇️ APLICA A FUNÇÃO gerarUrl ⬇️
+        const personagem = {
+            ...rows[0],
+            pers_src: gerarUrl(rows[0].pers_src, 'personagens', 'sem.jpg')
+        };
+
+        return response.status(200).json({
+            sucesso: true,
+            mensagem: `Personagem ${id} encontrado com sucesso!`,
+            dados: personagem
+        });
+
+    } catch (error) {
+        return response.status(500).json({
+            sucesso: false,
+            mensagem: 'Erro ao buscar personagem.',
+            dados: error.message
+        });
+    }
+},
 
     async cadastrarPersonagem(request, response) {
         try {
-            const { usu_id, pers_tipo, pers_nome, pers_src, pers_alt, pers_descricao, pers_frase } = request.body;
+            const { usu_id, pers_tipo, pers_nome, pers_alt, pers_descricao, pers_frase } = request.body;
+            const imagem = request.file; // ⬅️ AGORA VEM DO UPLOAD
 
             // Validações
-            if (!usu_id || !pers_tipo || !pers_nome || !pers_src) {
+            if (!usu_id || !pers_tipo || !pers_nome) {
                 return response.status(400).json({
                     sucesso: false,
-                    mensagem: 'Campos obrigatórios: usu_id, tipo, nome e src.'
+                    mensagem: 'Campos obrigatórios: usu_id, tipo e nome.'
                 });
             }
 
@@ -118,7 +132,8 @@ module.exports = {
                 VALUES (?, ?, ?, ?, ?, ?, ?);
             `;
 
-            const values = [usu_id, pers_tipo, pers_nome, pers_src, pers_alt, pers_descricao, pers_frase];
+            // ⬇️ MODIFICADO: imagem.filename em vez de pers_src do body
+            const values = [usu_id, pers_tipo, pers_nome, imagem ? imagem.filename : null, pers_alt, pers_descricao, pers_frase];
             const [result] = await db.query(sql, values);
 
             return response.status(201).json({
@@ -129,7 +144,7 @@ module.exports = {
                     usu_id,
                     pers_tipo,
                     pers_nome,
-                    pers_src,
+                    pers_src: imagem ? gerarUrl(imagem.filename, 'personagens', 'sem.jpg') : null,
                     pers_alt,
                     pers_descricao,
                     pers_frase
@@ -147,8 +162,22 @@ module.exports = {
 
     async editarPersonagem(request, response) {
         try {
-            const { usu_id, pers_tipo, pers_nome, pers_src, pers_alt, pers_descricao, pers_frase } = request.body;
+            const { usu_id, pers_tipo, pers_nome, pers_alt, pers_descricao, pers_frase } = request.body;
+            const imagem = request.file; // ⬅️ AGORA RECEBE UPLOAD
             const { id } = request.params;
+
+            // Buscar personagem atual
+            const [personagemAtual] = await db.query(
+                'SELECT pers_src FROM PERSONAGENS WHERE pers_id = ?',
+                [id]
+            );
+
+            if (personagemAtual.length === 0) {
+                return response.status(404).json({
+                    sucesso: false,
+                    mensagem: `Personagem ${id} não encontrado!`
+                });
+            }
 
             // Validações
             if (pers_tipo && !validarTipoPersonagem(pers_tipo)) {
@@ -158,19 +187,22 @@ module.exports = {
                 });
             }
 
+            // Se enviou nova imagem, usa ela. Senão, mantém a atual.
+            const nomeImagem = imagem ? imagem.filename : personagemAtual[0].pers_src;
+
             const sql = `
                 UPDATE PERSONAGENS SET
                     usu_id = COALESCE(?, usu_id),
                     pers_tipo = COALESCE(?, pers_tipo),
                     pers_nome = COALESCE(?, pers_nome),
-                    pers_src = COALESCE(?, pers_src),
+                    pers_src = ?,
                     pers_alt = COALESCE(?, pers_alt),
                     pers_descricao = COALESCE(?, pers_descricao),
                     pers_frase = COALESCE(?, pers_frase)
                 WHERE pers_id = ?;
             `;
 
-            const values = [usu_id, pers_tipo, pers_nome, pers_src, pers_alt, pers_descricao, pers_frase, id];
+            const values = [usu_id, pers_tipo, pers_nome, nomeImagem, pers_alt, pers_descricao, pers_frase, id];
             const [result] = await db.query(sql, values);
 
             if (result.affectedRows === 0) {
@@ -182,7 +214,10 @@ module.exports = {
 
             return response.status(200).json({
                 sucesso: true,
-                mensagem: `Personagem ${id} atualizado com sucesso!`
+                mensagem: `Personagem ${id} atualizado com sucesso!`,
+                dados: {
+                    pers_src: gerarUrl(nomeImagem, 'personagens', 'sem.jpg')
+                }
             });
 
         } catch (error) {

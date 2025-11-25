@@ -1,5 +1,6 @@
 const db = require('../database/connection');
 const { validarTipoArma, validarRaridade } = require('../utils/validacoes');
+const { gerarUrl } = require('../utils/gerarUrl'); 
 
 module.exports = {
     async listarArsenal(request, response) {
@@ -32,11 +33,17 @@ module.exports = {
 
             const [rows] = await db.query(sql, values);
 
+            // ⬇️ MODIFIQUE ESTA PARTE ⬇️
+            const dados = rows.map(arma => ({
+                ...arma,
+                ars_src: gerarUrl(arma.ars_src, 'arsenal', 'sem.jpg')
+            }));
+
             return response.status(200).json({
                 sucesso: true,
                 mensagem: rows.length > 0 ? 'Itens do arsenal encontrados.' : 'Nenhum item encontrado.',
-                nItens: rows.length,
-                dados: rows
+                nItens: dados.length,
+                dados: dados
             });
 
         } catch (error) {
@@ -64,14 +71,20 @@ module.exports = {
             if (rows.length === 0) {
                 return response.status(404).json({
                     sucesso: false,
-                    mensagem: `Item de arsenal ${id} não encontrado!`
+                    mensagem: `Item do arsenal ${id} não encontrado!`
                 });
             }
 
+            // ⬇️ APLICA A FUNÇÃO gerarUrl ⬇️
+            const arma = {
+                ...rows[0],
+                ars_src: gerarUrl(rows[0].ars_src, 'arsenal', 'sem.jpg')
+            };
+
             return response.status(200).json({
                 sucesso: true,
-                mensagem: `Item de arsenal ${id} encontrado com sucesso!`,
-                dados: rows[0]
+                mensagem: `Item do arsenal ${id} encontrado com sucesso!`,
+                dados: arma
             });
 
         } catch (error) {
@@ -86,15 +99,16 @@ module.exports = {
     async cadastrarArsenal(request, response) {
         try {
             const { 
-                usu_id, ars_tipo, ars_nome, ars_src, ars_alt, ars_dano, 
+                usu_id, ars_tipo, ars_nome, ars_alt, ars_dano, 
                 ars_raridade, ars_municao, ars_alcance, ars_taxa_disparo, ars_taxa_acerto 
             } = request.body;
+            const imagem = request.file; // ⬅️ AGORA VEM DO UPLOAD
 
             // Validações
-            if (!usu_id || !ars_tipo || !ars_nome || !ars_src) {
+            if (!usu_id || !ars_tipo || !ars_nome) {
                 return response.status(400).json({
                     sucesso: false,
-                    mensagem: 'Campos obrigatórios: usu_id, tipo, nome e src.'
+                    mensagem: 'Campos obrigatórios: usu_id, tipo e nome.'
                 });
             }
 
@@ -132,8 +146,9 @@ module.exports = {
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
             `;
 
+            // ⬇️ MODIFICADO: imagem.filename em vez de ars_src do body
             const values = [
-                usu_id, ars_tipo, ars_nome, ars_src, ars_alt, ars_dano, ars_raridade,
+                usu_id, ars_tipo, ars_nome, imagem ? imagem.filename : null, ars_alt, ars_dano, ars_raridade,
                 ars_municao, ars_alcance, ars_taxa_disparo, ars_taxa_acerto
             ];
 
@@ -147,7 +162,7 @@ module.exports = {
                     usu_id,
                     ars_tipo,
                     ars_nome,
-                    ars_src,
+                    ars_src: imagem ? gerarUrl(imagem.filename, 'arsenal', 'sem.jpg') : null,
                     ars_alt,
                     ars_dano,
                     ars_raridade,
@@ -170,10 +185,24 @@ module.exports = {
     async editarArsenal(request, response) {
         try {
             const { 
-                usu_id, ars_tipo, ars_nome, ars_src, ars_alt, ars_dano, 
+                usu_id, ars_tipo, ars_nome, ars_alt, ars_dano, 
                 ars_raridade, ars_municao, ars_alcance, ars_taxa_disparo, ars_taxa_acerto 
             } = request.body;
+            const imagem = request.file; // ⬅️ AGORA RECEBE UPLOAD
             const { id } = request.params;
+
+            // Buscar item atual
+            const [itemAtual] = await db.query(
+                'SELECT ars_src FROM ARSENAL WHERE ars_id = ?',
+                [id]
+            );
+
+            if (itemAtual.length === 0) {
+                return response.status(404).json({
+                    sucesso: false,
+                    mensagem: `Item do arsenal ${id} não encontrado!`
+                });
+            }
 
             // Validações
             if (ars_tipo && !validarTipoArma(ars_tipo)) {
@@ -190,12 +219,15 @@ module.exports = {
                 });
             }
 
+            // Se enviou nova imagem, usa ela. Senão, mantém a atual.
+            const nomeImagem = imagem ? imagem.filename : itemAtual[0].ars_src;
+
             const sql = `
                 UPDATE ARSENAL SET
                     usu_id = COALESCE(?, usu_id),
                     ars_tipo = COALESCE(?, ars_tipo),
                     ars_nome = COALESCE(?, ars_nome),
-                    ars_src = COALESCE(?, ars_src),
+                    ars_src = ?,
                     ars_alt = COALESCE(?, ars_alt),
                     ars_dano = COALESCE(?, ars_dano),
                     ars_raridade = COALESCE(?, ars_raridade),
@@ -207,7 +239,7 @@ module.exports = {
             `;
 
             const values = [
-                usu_id, ars_tipo, ars_nome, ars_src, ars_alt, ars_dano, ars_raridade,
+                usu_id, ars_tipo, ars_nome, nomeImagem, ars_alt, ars_dano, ars_raridade,
                 ars_municao, ars_alcance, ars_taxa_disparo, ars_taxa_acerto, id
             ];
 
@@ -222,7 +254,10 @@ module.exports = {
 
             return response.status(200).json({
                 sucesso: true,
-                mensagem: `Item do arsenal ${id} atualizado com sucesso!`
+                mensagem: `Item do arsenal ${id} atualizado com sucesso!`,
+                dados: {
+                    ars_src: gerarUrl(nomeImagem, 'arsenal', 'sem.jpg')
+                }
             });
 
         } catch (error) {

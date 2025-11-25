@@ -13,6 +13,12 @@ const ArsenalController = require('../controllers/arsenal');
 const MapasController = require('../controllers/mapas');
 
 const { autenticar, autorizar } = require('../middleware/auth');
+const uploadImage = require('../middleware/uploadHelper');
+
+const uploadNoticias = uploadImage('noticias');
+const uploadPersonagens = uploadImage('personagens');
+const uploadArsenal = uploadImage('arsenal');
+const uploadMapas = uploadImage('mapas');
 
 // Rotas públicas
 router.post('/login', UsuariosController.login); 
@@ -44,28 +50,29 @@ router.delete('/faq/:id', autenticar, autorizar('admin', 'moderador'), FAQContro
 
 // Notícias (autenticados)
 router.get('/noticias', NoticiasController.listarNoticias); 
-router.post('/noticias', autenticar, NoticiasController.cadastrarNoticias); 
-router.patch('/noticias/:id', autenticar, NoticiasController.editarNoticias); 
+router.post('/noticias', autenticar, uploadNoticias.single('imagem'), NoticiasController.cadastrarNoticias);
+router.patch('/noticias/:id', autenticar, uploadNoticias.single('imagem'), NoticiasController.editarNoticias);
 router.delete('/noticias/:id', autenticar, NoticiasController.apagarNoticias);
 
 // Personagens (autenticados)
 router.get('/personagens', PersonagensController.listarPersonagens);
 router.get('/personagens/:id', PersonagensController.listarPersonagemPorId);
-router.post('/personagens', autenticar, PersonagensController.cadastrarPersonagem);
-router.put('/personagens/:id', autenticar, PersonagensController.editarPersonagem);
+router.post('/personagens', autenticar, uploadPersonagens.single('imagem'), PersonagensController.cadastrarPersonagem);
+router.put('/personagens/:id', autenticar, uploadPersonagens.single('imagem'), PersonagensController.editarPersonagem);
 router.delete('/personagens/:id', autenticar, PersonagensController.apagarPersonagem);
 
 // Arsenal (autenticados)
 router.get('/arsenal', ArsenalController.listarArsenal);
-router.get('/arsenal/:id', ArsenalController.listarArmaPorId);
-router.post('/arsenal', autenticar, ArsenalController.cadastrarArsenal);
-router.put('/arsenal/:id', autenticar, ArsenalController.editarArsenal);
+router.get('/arsenal/:id', ArsenalController.listarArmaPorId); // ⬅️ ADICIONE ESTA LINHA
+router.post('/arsenal', autenticar, uploadArsenal.single('imagem'), ArsenalController.cadastrarArsenal);
+router.put('/arsenal/:id', autenticar, uploadArsenal.single('imagem'), ArsenalController.editarArsenal);
 router.delete('/arsenal/:id', autenticar, ArsenalController.apagarArsenal);
 
 // Mapas (autenticados)
 router.get('/mapas', MapasController.listarMapas);
-router.post('/mapas', autenticar, MapasController.cadastrarMapa);
-router.put('/mapas/:id', autenticar, MapasController.editarMapa);
+router.get('/mapas/:id', MapasController.listarMapaPorId); // ⬅️ ADICIONE ESTA LINHA
+router.post('/mapas', autenticar, uploadMapas.single('imagem'), MapasController.cadastrarMapa);
+router.put('/mapas/:id', autenticar, uploadMapas.single('imagem'), MapasController.editarMapa);
 router.delete('/mapas/:id', autenticar, MapasController.apagarMapa);
 
 // Suporte (público para criar, autenticado para listar/editar)
