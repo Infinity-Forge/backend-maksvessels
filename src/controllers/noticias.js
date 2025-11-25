@@ -1,5 +1,7 @@
 const db = require("../database/connection");
 const { gerarUrl } = require("../utils/gerarUrl");
+const fs = require("fs");
+const path = require("path");
 
 module.exports = {
   async listarNoticias(request, response) {
@@ -137,10 +139,10 @@ module.exports = {
   async editarNoticias(request, response) {
     try {
       const { usu_id, not_titulo, not_conteudo } = request.body;
-      const imagem = request.file; // ⬅️ AGORA TAMBÉM RECEBE UPLOAD
+      const imagem = request.file;
       const { id } = request.params;
 
-      // Buscar a notícia atual para manter a imagem existente se não enviar nova
+      // Buscar a notícia atual
       const [noticiaAtual] = await db.query(
         "SELECT not_imagem FROM NOTICIAS WHERE not_id = ?",
         [id]
@@ -151,6 +153,25 @@ module.exports = {
           sucesso: false,
           mensagem: `Notícia ${id} não encontrada.`,
         });
+      }
+
+      // ⬇️ EXCLUSÃO DA IMAGEM ANTIGA ⬇️
+      if (imagem && noticiaAtual[0].not_imagem) {
+        const caminhoImagemAntiga = path.join(
+          __dirname,
+          "../../public/noticias",
+          noticiaAtual[0].not_imagem
+        );
+
+        if (
+          fs.existsSync(caminhoImagemAntiga) &&
+          noticiaAtual[0].not_imagem !== "sem.jpg"
+        ) {
+          fs.unlinkSync(caminhoImagemAntiga);
+          console.log(
+            `🗑️ Imagem antiga excluída: ${noticiaAtual[0].not_imagem}`
+          );
+        }
       }
 
       // Se enviou nova imagem, usa ela. Senão, mantém a atual.
