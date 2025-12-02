@@ -35,7 +35,6 @@ module.exports = {
 
       const [rows] = await db.query(sql, values);
 
-      // ⬇️ MODIFIQUE ESTA PARTE ⬇️
       const dados = rows.map((arma) => ({
         ...arma,
         ars_src: gerarUrl(arma.ars_src, "arsenal", "sem.jpg"),
@@ -79,7 +78,6 @@ module.exports = {
         });
       }
 
-      // ⬇️ APLICA A FUNÇÃO gerarUrl ⬇️
       const arma = {
         ...rows[0],
         ars_src: gerarUrl(rows[0].ars_src, "arsenal", "sem.jpg"),
@@ -113,7 +111,7 @@ module.exports = {
         ars_taxa_disparo,
         ars_taxa_acerto,
       } = request.body;
-      const imagem = request.file; // ⬅️ AGORA VEM DO UPLOAD
+      const imagem = request.file; 
 
       // Validações
       if (!usu_id || !ars_tipo || !ars_nome) {
@@ -157,7 +155,6 @@ module.exports = {
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
             `;
 
-      // ⬇️ MODIFICADO: imagem.filename em vez de ars_src do body
       const values = [
         usu_id,
         ars_tipo,
@@ -233,7 +230,6 @@ module.exports = {
         });
       }
 
-      // ⬇️ EXCLUSÃO DA IMAGEM ANTIGA ⬇️
       if (imagem && itemAtual[0].ars_src) {
         const caminhoImagemAntiga = path.join(
           __dirname,

@@ -34,7 +34,6 @@ app.get('/', (request, response) => {
     });
 });
 
-// ⬇️⬇️⬇️ ESTA LINHA DEVE ESTAR ATIVA ⬇️⬇️⬇️
 app.use(router);
 
 // Rota para 404
