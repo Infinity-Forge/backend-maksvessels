@@ -1,6 +1,6 @@
 const db = require("../database/connection");
 const { validarTipoPersonagem } = require("../utils/validacoes");
-const { gerarUrl } = require("../utils/gerarUrl"); // ⬅️ ADICIONE ESTA LINHA
+const { gerarUrl } = require("../utils/gerarUrl"); 
 const fs = require("fs");
 const path = require("path");
 
@@ -32,7 +32,6 @@ module.exports = {
 
       const [rows] = await db.query(sql, values);
 
-      // ⬇️ MODIFIQUE ESTA PARTE ⬇️
       const dados = rows.map((personagem) => ({
         ...personagem,
         pers_src: gerarUrl(personagem.pers_src, "personagens", "sem.jpg"),
@@ -76,7 +75,6 @@ module.exports = {
         });
       }
 
-      // ⬇️ APLICA A FUNÇÃO gerarUrl ⬇️
       const personagem = {
         ...rows[0],
         pers_src: gerarUrl(rows[0].pers_src, "personagens", "sem.jpg"),
@@ -106,7 +104,7 @@ module.exports = {
         pers_descricao,
         pers_frase,
       } = request.body;
-      const imagem = request.file; // ⬅️ AGORA VEM DO UPLOAD
+      const imagem = request.file; 
 
       // Validações
       if (!usu_id || !pers_tipo || !pers_nome) {
@@ -143,7 +141,6 @@ module.exports = {
                 VALUES (?, ?, ?, ?, ?, ?, ?);
             `;
 
-      // ⬇️ MODIFICADO: imagem.filename em vez de pers_src do body
       const values = [
         usu_id,
         pers_tipo,
@@ -206,7 +203,6 @@ module.exports = {
         });
       }
 
-      // ⬇️ EXCLUSÃO DA IMAGEM ANTIGA ⬇️
       if (imagem && personagemAtual[0].pers_src) {
         const caminhoImagemAntiga = path.join(
           __dirname,

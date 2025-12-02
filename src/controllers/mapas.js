@@ -33,7 +33,6 @@ module.exports = {
 
       const [rows] = await db.query(sql, values);
 
-      // ⬇️ MODIFIQUE ESTA PARTE ⬇️
       const dados = rows.map((mapa) => ({
         ...mapa,
         mapa_src: gerarUrl(mapa.mapa_src, "mapas", "sem.jpg"),
@@ -75,7 +74,6 @@ module.exports = {
         });
       }
 
-      // ⬇️ APLICA A FUNÇÃO gerarUrl ⬇️
       const mapa = {
         ...rows[0],
         mapa_src: gerarUrl(rows[0].mapa_src, "mapas", "sem.jpg"),
@@ -98,7 +96,7 @@ module.exports = {
   async cadastrarMapa(request, response) {
     try {
       const { usu_id, mapa_alt, mapa_nome, mapa_descricao } = request.body;
-      const imagem = request.file; // ⬅️ AGORA VEM DO UPLOAD
+      const imagem = request.file; 
 
       // Validações
       if (!usu_id || !mapa_nome) {
@@ -127,7 +125,6 @@ module.exports = {
                 VALUES (?, ?, ?, ?, ?);
             `;
 
-      // ⬇️ MODIFICADO: imagem.filename em vez de mapa_src do body
       const values = [
         usu_id,
         imagem ? imagem.filename : null,
@@ -179,7 +176,6 @@ module.exports = {
         });
       }
 
-      // ⬇️ EXCLUSÃO DA IMAGEM ANTIGA ⬇️
       if (imagem && mapaAtual[0].mapa_src) {
         const caminhoImagemAntiga = path.join(
           __dirname,

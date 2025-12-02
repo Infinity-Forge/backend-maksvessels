@@ -48,7 +48,6 @@ module.exports = {
 
       const [rows] = await db.query(sql, values);
 
-      // ⬇️ MODIFIQUE ESTA PARTE ⬇️
       const dados = rows.map((noticia) => ({
         ...noticia,
         not_imagem: gerarUrl(noticia.not_imagem, "noticias", "sem.jpg"),
@@ -62,7 +61,7 @@ module.exports = {
             : "Nenhuma notícia encontrada.",
         nItens: dados.length,
         total,
-        dados: dados, // ⬅️ Use 'dados' em vez de 'rows'
+        dados: dados, 
       });
     } catch (error) {
       return response.status(500).json({
@@ -149,7 +148,7 @@ module.exports = {
   async cadastrarNoticias(request, response) {
     try {
       const { usu_id, not_titulo, not_conteudo } = request.body;
-      const imagem = request.file; // ⬅️ AGORA VEM DO UPLOAD
+      const imagem = request.file; 
 
       // Validações
       if (!usu_id || !not_titulo || !not_conteudo) {
@@ -178,7 +177,6 @@ module.exports = {
                 VALUES (?, ?, ?, ?);
             `;
 
-      // ⬇️ MODIFICADO: imagem.filename em vez de not_imagem do body
       const values = [
         usu_id,
         not_titulo,
@@ -228,7 +226,6 @@ module.exports = {
         });
       }
 
-      // ⬇️ EXCLUSÃO DA IMAGEM ANTIGA ⬇️
       if (imagem && noticiaAtual[0].not_imagem) {
         const caminhoImagemAntiga = path.join(
           __dirname,
