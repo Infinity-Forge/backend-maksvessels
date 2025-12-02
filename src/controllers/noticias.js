@@ -73,6 +73,79 @@ module.exports = {
     }
   },
 
+  async listarNoticiasPaginado(request, response) {
+    try {
+      const {
+        titulo,
+        autor,
+        data_inicio,
+        data_fim,
+        page = 1,
+      } = request.query;
+
+      const limit = 4;
+      const offset = (parseInt(page) - 1) * limit;
+
+      let where = "WHERE 1=1";
+      const values = [];
+
+      if (titulo) {
+        where += " AND not_titulo LIKE ?";
+        values.push(`%${titulo}%`);
+      }
+
+      if (autor) {
+        where += " AND usu_id = ?";
+        values.push(autor);
+      }
+
+      if (data_inicio && data_fim) {
+        where += " AND not_data_publicacao BETWEEN ? AND ?";
+        values.push(data_inicio, data_fim);
+      }
+
+      const [[{ total }]] = await db.query(
+        `SELECT COUNT(*) as total FROM NOTICIAS ${where}`,
+        values
+      );
+
+      const sql = `
+        SELECT not_id, usu_id, not_titulo, not_conteudo, not_imagem, not_data_publicacao
+        FROM NOTICIAS
+        ${where}
+        ORDER BY not_data_publicacao DESC
+        LIMIT ? OFFSET ?
+      `;
+
+      values.push(limit, offset);
+
+      const [rows] = await db.query(sql, values);
+
+      const dados = rows.map((noticia) => ({
+        ...noticia,
+        not_imagem: gerarUrl(noticia.not_imagem, "noticias", "sem.jpg"),
+      }));
+
+      return response.status(200).json({
+        sucesso: true,
+        mensagem:
+          dados.length > 0
+            ? "Notícias encontradas."
+            : "Nenhuma notícia encontrada.",
+        nItens: dados.length,
+        total,
+        dados,
+      });
+
+    } catch (error) {
+      return response.status(500).json({
+        sucesso: false,
+        mensagem: "Erro ao listar notícias.",
+        dados: error.message,
+      });
+    }
+  },
+
   async cadastrarNoticias(request, response) {
     try {
       const { usu_id, not_titulo, not_conteudo } = request.body;

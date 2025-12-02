@@ -50,6 +50,7 @@ router.delete('/faq/:id', autenticar, autorizar('admin', 'moderador'), FAQContro
 
 // Notícias (autenticados)
 router.get('/noticias', NoticiasController.listarNoticias); 
+router.get('/noticiasPaginado', NoticiasController.listarNoticiasPaginado);
 router.post('/noticias', autenticar, uploadNoticias.single('imagem'), NoticiasController.cadastrarNoticias);
 router.patch('/noticias/:id', autenticar, uploadNoticias.single('imagem'), NoticiasController.editarNoticias);
 router.delete('/noticias/:id', autenticar, NoticiasController.apagarNoticias);
